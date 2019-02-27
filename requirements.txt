@@ -1,0 +1,5 @@
+attr
+boto3
+oyaml
+requests
+troposphere[policy] >= 2.4.0
