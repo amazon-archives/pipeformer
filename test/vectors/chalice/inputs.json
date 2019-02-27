@@ -1,0 +1,36 @@
+{
+    "Description": "Input values for pipeformer-managed project: ExampleChaliceApp",
+    "Parameters": {
+        "Key0Stack0Arn": {"Type": "String"}
+    },
+    "Resources": {
+        "Secret0GitHubToken": {
+            "Type": "AWS::SecretsManager::Secret",
+            "Properties": {
+                "KmsKeyId": {"Ref": "Key0Stack0Arn"},
+                "SecretString": "REPLACEME",
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        },
+        "Parameter0GitHubOwner": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+                "Type": "String",
+                "Value": "aws"
+            }
+        }
+    },
+    "Outputs": {
+        "Parameter0GitHubOwner0Name": {
+            "Value": {"Ref": "Parameter0GitHubOwner"}
+        },
+        "Secret0GitHubToken0Arn": {
+            "Value": {"Ref": "Secret0GitHubToken"}
+        }
+    }
+}
