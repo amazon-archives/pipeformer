@@ -1,0 +1,53 @@
+name: ExampleChaliceApp
+description: Example pipeline for deploying a Chalice application.
+custom-cmk: true
+
+inputs:
+  GitHubToken:
+    description: GitHub user access token that CodePipeline will use to authenticate to GitHub.
+    secret: true
+  GitHubOwner:
+    description: GitHub user that owns target repository.
+    secret: false
+
+pipeline:
+  source:
+    - provider: GitHub
+      outputs:
+        - SourceOutput
+      configuration:
+        Owner: "{INPUT:GitHubOwner}"
+        Repo: example
+        Branch: master
+        OAuthToken: "{INPUT:GitHubToken}"
+
+  build:
+    - provider: CodeBuild
+      image: aws/codebuild/python:3.6.5
+      buildspec: .chalice/buildspec.yaml
+      env:
+        key1: value2
+        key3: value4
+      inputs:
+        - SourceOutput
+      outputs:
+        - CompiledCfnTemplate
+
+  deploy:
+    - provider: CloudFormation
+      run-order: 1
+      inputs:
+        - CompiledCfnTemplate
+      configuration:
+        StackName: ExampleChaliceAppStack
+        ChangeSetName: ExampleChaliceAppChangeSet
+        ActionMode: CHANGE_SET_REPLACE
+        Capabilities: CAPABILITY_IAM
+        TemplatePath: CompiledCfnTemplate::transformed.yaml
+    - provider: CloudFormation
+      run-order: 2
+      configuration:
+        StackName: ExampleChaliceAppStack
+        ChangeSetName: ExampleChaliceAppChangeSet
+        ActionMode: CHANGE_SET_EXECUTE
+        OutputFileName: StackOutputs.json

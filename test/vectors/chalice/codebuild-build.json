@@ -1,0 +1,53 @@
+{
+    "Description": "CodeBuild projects for build stage in pipeformer-managed project: ExampleChaliceApp",
+    "Parameters": {
+        "Bucket0ProjectResources0Name": {"Type": "String"},
+        "Role0CodeBuild0Arn": {"Type": "String"}
+    },
+    "Resources": {
+        "Project0a": {
+            "Type": "AWS::CodeBuild::Project",
+            "Properties": {
+                "Name": {"Fn::Sub": ["${AWS::StackName}-Project0a"]},
+                "ServiceRole": {"Ref": "Role0CodeBuild0Arn"},
+                "Artifacts": {
+                    "Type": "CODEPIPELINE"
+                },
+                "Source": {
+                    "Type": "CODEPIPELINE",
+                    "BuildSpec": ".chalice/buildspec.yaml"
+                },
+                "Environment": {
+                    "ComputeType": "BUILD_GENERAL1_SMALL",
+                    "Type": "LINUX_CONTAINER",
+                    "Image": "aws/codebuild/python:3.6.5",
+                    "EnvironmentVariables": [
+                        {
+                            "Name": "PIPEFORMER_S3_BUCKET",
+                            "Value": {"Ref": "Bucket0ProjectResources0Name"}
+                        },
+                        {
+                            "Name": "key1",
+                            "Value": "value2"
+                        },
+                        {
+                            "Name": "key3",
+                            "Value": "value4"
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "Project0a0Name": {
+            "Value": {"Ref": "Project0a"}
+        }
+    }
+}

@@ -1,0 +1,327 @@
+{
+    "Description": "Core resources for pipeformer-managed project: ExampleChaliceApp",
+    "Resources": {
+        "Key0Stack": {
+            "Type": "AWS::KMS::Key",
+            "Properties": {
+                "Enabled": true,
+                "EnableKeyRotation": false,
+                "KeyPolicy": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": {
+                                    "Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:root"
+                                }
+                            },
+                            "Action": [
+                                "kms:Encrypt",
+                                "kms:Decrypt",
+                                "kms:ReEncrypt",
+                                "kms:GenerateDataKey",
+                                "kms:GenerateDataKeyWithoutPlaintext",
+                                "kms:DescribeKey",
+                                "kms:GetKeyPolicy"
+                            ],
+                            "Resource": ["*"]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": {
+                                    "Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:root"
+                                }
+                            },
+                            "Action": [
+                                "kms:GetKeyPolicy",
+                                "kms:PutKeyPolicy",
+                                "kms:ScheduleKeyDeletion",
+                                "kms:CancelKeyDeletion",
+                                "kms:CreateAlias",
+                                "kms:DeleteAlias",
+                                "kms:UpdateAlias",
+                                "kms:DescribeKey",
+                                "kms:EnableKey",
+                                "kms:DisableKey",
+                                "kms:GetKeyRotationStatus",
+                                "kms:EnableKeyRotation",
+                                "kms:DisableKeyRotation",
+                                "kms:ListKeyPolicies",
+                                "kms:ListResourceTags",
+                                "kms:TagResource",
+                                "kms:UntagResource"
+                            ],
+                            "Resource": ["*"]
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        },
+        "Bucket0Artifacts": {
+            "Type": "AWS::S3::Bucket",
+            "Description": "S3 bucket used by pipeformer-managed resources.",
+            "Properties": {
+                "BucketEncryption": {
+                    "ServerSideEncryptionConfiguration": [
+                        {
+                            "ServerSideEncryptionByDefault": {
+                                "SSEAlgorithm": "aws:kms",
+                                "KMSMasterKeyID": {"Fn::GetAtt": ["Key0Stack", "Arn"]}
+                            }
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        },
+        "Bucket0ProjectResources": {
+            "Type": "AWS::S3::Bucket",
+            "Description": "S3 bucket for use by the pipeformer-managed project.",
+            "Properties": {
+                "BucketEncryption": {
+                    "ServerSideEncryptionConfiguration": [
+                        {
+                            "ServerSideEncryptionByDefault": {
+                                "SSEAlgorithm": "aws:kms",
+                                "KMSMasterKeyID": {"Fn::GetAtt": ["Key0Stack", "Arn"]}
+                            }
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        },
+        "Upload0Template0Inputs": {
+            "Type": "AWS::CloudFormation::WaitConditionHandle"
+        },
+        "WaitFor0Upload0Template0Inputs": {
+            "Type": "AWS::CloudFormation::WaitCondition",
+            "Properties": {
+                "Handle": {"Ref": "Upload0Template0Inputs"},
+                "Count": 1,
+                "Timeout": 3600
+            }
+        },
+        "Stack0Inputs": {
+            "Type": "AWS::CloudFormation::Stack",
+            "DependsOn": [
+                "WaitFor0Upload0Template0Inputs"
+            ],
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${Bucket0Artifacts.DomainName}/${key}",
+                        {
+                            "key": {
+                                "Fn::Select": [
+                                    3,
+                                    {
+                                        "Fn::Split": [
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt":
+                                                [
+                                                    "WaitFor0Upload0Template0Inputs",
+                                                    "Data"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "Key0Stack0Arn": {"Fn::GetAtt": ["Key0Stack", "Arn"]}
+                },
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        },
+        "Upload0Template0Iam": {
+            "Type": "AWS::CloudFormation::WaitConditionHandle"
+        },
+        "WaitFor0Upload0Template0Iam": {
+            "Type": "AWS::CloudFormation::WaitCondition",
+            "Properties": {
+                "Handle": {"Ref": "Upload0Template0Iam"},
+                "Count": 1,
+                "Timeout": 3600
+            }
+        },
+        "Stack0Iam": {
+            "Type": "AWS::CloudFormation::Stack",
+            "DependsOn": [
+                "WaitFor0Upload0Template0Iam"
+            ],
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${Bucket0Artifacts.DomainName}/${key}",
+                        {
+                            "key": {
+                                "Fn::Select": [
+                                    3,
+                                    {
+                                        "Fn::Split": [
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt":
+                                                [
+                                                    "WaitFor0Upload0Template0Iam",
+                                                    "Data"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "Bucket0Artifacts0Arn": {"Fn::GetAtt": ["Bucket0Artifacts", "Arn"]},
+                    "Bucket0ProjectResources0Arn": {"Fn::GetAtt": ["Bucket0ProjectResources", "Arn"]},
+                    "Key0Stack0Arn": {"Fn::GetAtt": ["Key0Stack", "Arn"]}
+                },
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        },
+        "Upload0Template0Pipeline": {
+            "Type": "AWS::CloudFormation::WaitConditionHandle"
+        },
+        "WaitFor0Upload0Template0Pipeline": {
+            "Type": "AWS::CloudFormation::WaitCondition",
+            "Properties": {
+                "Handle": {"Ref": "Upload0Template0Pipeline"},
+                "Count": 1,
+                "Timeout": 3600
+            }
+        },
+        "Upload0Template0CodeBuild0Stage0build": {
+            "Type": "AWS::CloudFormation::WaitConditionHandle"
+        },
+        "WaitFor0Upload0Template0CodeBuild0Stage0build": {
+            "Type": "AWS::CloudFormation::WaitCondition",
+            "Properties": {
+                "Handle": {"Ref": "Upload0Template0CodeBuild0Stage0build"},
+                "Count": 1,
+                "Timeout": 3600
+            }
+        },
+        "Upload0Input0Values": {
+            "Type": "AWS::CloudFormation::WaitConditionHandle"
+        },
+        "WaitFor0Upload0Input0Values": {
+            "Type": "AWS::CloudFormation::WaitCondition",
+            "Properties": {
+                "Handle": {"Ref": "Upload0Input0Values"},
+                "Count": 1,
+                "Timeout": 3600
+            }
+        },
+        "Stack0Pipeline": {
+            "Type": "AWS::CloudFormation::Stack",
+            "DependsOn": [
+                "WaitFor0Upload0Template0Pipeline",
+                "Stack0Inputs",
+                "Stack0Iam",
+                "WaitFor0Upload0Template0CodeBuild0Stage0build",
+                "WaitFor0Upload0Input0Values"
+            ],
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": [
+                        "https://${Bucket0Artifacts.DomainName}/${key}",
+                        {
+                            "key": {
+                                "Fn::Select": [
+                                    3,
+                                    {
+                                        "Fn::Split": [
+                                            "\"",
+                                            {
+                                                "Fn::GetAtt":
+                                                [
+                                                    "WaitFor0Upload0Template0Pipeline",
+                                                    "Data"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Parameters": {
+                    "Template0CodeBuild0Stage0build0Url": {
+                        "Fn::Sub": [
+                            "https://${Bucket0Artifacts.DomainName}/${key}",
+                            {
+                                "key": {
+                                    "Fn::Select": [
+                                        3,
+                                        {
+                                            "Fn::Split": [
+                                                "\"",
+                                                {
+                                                    "Fn::GetAtt":
+                                                    [
+                                                        "WaitFor0Upload0Template0CodeBuild0Stage0build",
+                                                        "Data"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "Bucket0Artifacts0Name": {"Ref": "Bucket0Artifacts"},
+                    "Bucket0ProjectResources0Name": {"Ref": "Bucket0ProjectResources"},
+                    "Role0CodeBuild0Arn": {"Fn::GetAtt":  ["Stack0Iam", "Outputs.Role0CodeBuild0Arn"]},
+                    "Role0CodePipeline0Arn": {"Fn::GetAtt": ["Stack0Iam", "Outputs.Role0CodePipeline0Arn"]},
+                    "Role0CloudFormation0Arn": {"Fn::GetAtt": ["Stack0Iam", "Outputs.Role0CloudFormation0Arn"]},
+                    "Parameter0GitHubOwner0Name": {"Fn::GetAtt": ["Stack0Inputs", "Outputs.Parameter0GitHubOwner0Name"]},
+                    "Secret0GitHubToken0Arn": {"Fn::GetAtt": ["Stack0Inputs", "Outputs.Secret0GitHubToken0Arn"]}
+                },
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        }
+    }
+}

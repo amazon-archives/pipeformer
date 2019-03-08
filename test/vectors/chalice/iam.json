@@ -1,0 +1,232 @@
+{
+    "Description": "IAM resources for pipeformer-managed project: ExampleChaliceApp",
+    "Parameters": {
+        "Bucket0Artifacts0Arn": {"Type": "String"},
+        "Bucket0ProjectResources0Arn": {"Type": "String"},
+        "Key0Stack0Arn": {"Type": "String"}
+    },
+    "Resources": {
+        "Role0CloudFormation": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Principal": {
+                                "Service": "cloudformation.amazonaws.com"
+                            },
+                            "Effect": "Allow",
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": {"Fn::Sub": ["${AWS::StackName}-CloudFormation"]},
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "*"
+                                    ],
+                                    "Resource": ["*"]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "Role0CodePipeline": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Principal": {
+                                "Service": "codepipeline.amazonaws.com"
+                            },
+                            "Effect": "Allow",
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": {"Fn::Sub": ["${AWS::StackName}-CodePipeline"]},
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:GetBucketVersioning",
+                                        "s3:PutBucketVersioning"
+                                    ],
+                                    "Resource": [
+                                        {"Ref": "Bucket0Artifacts0Arn"},
+                                        {"Ref": "Bucket0ProjectResources0Arn"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:GetObject",
+                                        "s3:PutObject"
+                                    ],
+                                    "Resource": [
+                                        {"Fn::Sub": "${Bucket0Artifacts0Arn}/*"},
+                                        {"Fn::Sub": "${Bucket0ProjectResources0Arn}/*"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "kms:Encrypt",
+                                        "kms:Decrypt",
+                                        "kms:GenerateDataKey"
+                                    ],
+                                    "Resource": [
+                                        {"Ref": "Key0Stack0Arn"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "cloudwatch:*"
+                                    ],
+                                    "Resource": [
+                                        {"Fn::Sub": "arn:${AWS::Partition}:cloudwatch:${AWS::Region}:${AWS::AccountId}:*"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "iam:PassRole"
+                                    ],
+                                    "Resource": [
+                                        {"Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "lambda:InvokeFunction",
+                                        "lambda:ListFunctions"
+                                    ],
+                                    "Resource": [
+                                        {"Fn::Sub": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:*"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "cloudformation:CreateStack",
+                                        "cloudformation:DeleteStack",
+                                        "cloudformation:DescribeStacks",
+                                        "cloudformation:UpdateStack",
+                                        "cloudformation:CreateChangeSet",
+                                        "cloudformation:DeleteChangeSet",
+                                        "cloudformation:DescribeChangeSet",
+                                        "cloudformation:ExecuteChangeSet",
+                                        "cloudformation:SetStackPolicy",
+                                        "cloudformation:ValidateTemplate"
+                                    ],
+                                    "Resource": [
+                                        {"Fn::Sub": "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:*"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "codebuild:BatchGetBuilds",
+                                        "codebuild:StartBuild"
+                                    ],
+                                    "Resource": [
+                                        {"Fn::Sub": "arn:${AWS::Partition}:codebuild:${AWS::Region}:${AWS::AccountId}:*"}
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "Role0CodeBuild": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Principal": {
+                                "Service": "codebuild.amazonaws.com"
+                            },
+                            "Effect": "Allow",
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": {"Fn::Sub": ["${AWS::StackName}-CodeBuild"]},
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                    ],
+                                    "Resource": [
+                                        {"Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:*"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:GetObject",
+                                        "s3:GetObjectVersion",
+                                        "s3:PutObject"
+                                    ],
+                                    "Resource": [
+                                        {"Fn::Sub": "${Bucket0Artifacts0Arn}/*"},
+                                        {"Fn::Sub": "${Bucket0ProjectResources0Arn}/*"}
+                                    ]
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "kms:Encrypt",
+                                        "kms:Decrypt",
+                                        "kms:GenerateDataKey"
+                                    ],
+                                    "Resource": [
+                                        {"Ref": "Key0Stack0Arn"}
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "Role0CodeBuild0Arn": {
+            "Value": {"Fn::GetAtt": ["Role0CodeBuild", "Arn"]}
+        },
+        "Role0CodePipeline0Arn": {
+            "Value": {"Fn::GetAtt": ["Role0CodePipeline", "Arn"]}
+        },
+        "Role0CloudFormation0Arn": {
+            "Value": {"Fn::GetAtt": ["Role0CloudFormation", "Arn"]}
+        }
+    }
+}

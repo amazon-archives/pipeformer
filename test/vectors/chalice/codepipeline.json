@@ -1,0 +1,167 @@
+{
+    "Description": "CodePipeline resources for pipeformer-managed project: ExampleChaliceApp",
+    "Parameters": {
+        "Bucket0Artifacts0Name": {"Type": "String"},
+        "Bucket0ProjectResources0Name": {"Type": "String"},
+        "Role0CloudFormation0Arn": {"Type": "String"},
+        "Role0CodeBuild0Arn": {"Type": "String"},
+        "Role0CodePipeline0Arn": {"Type": "String"},
+        "Parameter0GitHubOwner0Name": {"Type": "String"},
+        "Secret0GitHubToken0Arn": {"Type": "String"},
+        "Template0CodeBuild0Stage0build0Url": {"Type": "String"}
+    },
+    "Resources": {
+        "Stack0CodeBuild0Stage0build": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {"Ref": "Template0CodeBuild0Stage0build0Url"},
+                "Parameters": {
+                    "Bucket0ProjectResources0Name": {"Ref":  "Bucket0ProjectResources0Name"},
+                    "Role0CodeBuild0Arn": {"Ref":  "Role0CodeBuild0Arn"}
+                },
+                "Tags": [
+                    {
+                        "Key": "pipeformer",
+                        "Value": "ExampleChaliceApp"
+                    }
+                ]
+            }
+        },
+        "Pipeline0ExampleChaliceApp": {
+            "Type": "AWS::CodePipeline::Pipeline",
+            "Properties": {
+                "ArtifactStore": {
+                    "Type": "S3",
+                    "Location": {"Ref": "Bucket0Artifacts0Name"}
+                },
+                "RoleArn": {"Ref": "Role0CodePipeline0Arn"},
+                "Stages": [
+                    {
+                        "Name": "source",
+                        "Actions": [
+                            {
+                                "Name": "source-0",
+                                "RunOrder": 1,
+                                "ActionTypeId": {
+                                    "Category": "Source",
+                                    "Owner": "ThirdParty",
+                                    "Provider": "GitHub",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "Owner": {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "",
+                                                {
+                                                    "Fn::Sub": [
+                                                        "{{resolve:ssm:${name}:1}}",
+                                                        {
+                                                            "name": {"Ref": "Parameter0GitHubOwner0Name"}
+                                                        }
+                                                    ]
+                                                },
+                                                ""
+                                            ]
+                                        ]
+                                    },
+                                    "Repo": "example",
+                                    "Branch": "master",
+                                    "OAuthToken": {
+                                        "Fn::Join": [
+                                            "",
+                                            [
+                                                "",
+                                                {
+                                                    "Fn::Sub": [
+                                                        "{{resolve:secretsmanager:${arn}:SecretString}}",
+                                                        {
+                                                            "arn": {"Ref": "Secret0GitHubToken0Arn"}
+                                                        }
+                                                    ]
+                                                },
+                                                ""
+                                            ]
+                                        ]
+                                    },
+                                    "PollForSourceChanges": true
+                                },
+                                "OutputArtifacts": [
+                                    {"Name": "SourceOutput"}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Name": "build",
+                        "Actions": [
+                            {
+                                "Name": "build-0",
+                                "RunOrder": 1,
+                                "ActionTypeId": {
+                                    "Category": "Build",
+                                    "Owner": "AWS",
+                                    "Provider": "CodeBuild",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "ProjectName": {"Fn::GetAtt": ["Stack0CodeBuild0Stage0build", "Outputs.Project0a0Name"]}
+                                },
+                                "InputArtifacts": [
+                                    {"Name": "SourceOutput"}
+                                ],
+                                "OutputArtifacts": [
+                                    {"Name": "CompiledCfnTemplate"}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Name": "deploy",
+                        "Actions": [
+                            {
+                                "Name": "deploy-0",
+                                "RunOrder": 1,
+                                "ActionTypeId": {
+                                    "Category": "Deploy",
+                                    "Owner": "AWS",
+                                    "Provider": "CloudFormation",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "ActionMode": "CHANGE_SET_REPLACE",
+                                    "Capabilities": "CAPABILITY_IAM",
+                                    "ChangeSetName": "ExampleChaliceAppChangeSet",
+                                    "RoleArn": {"Ref": "Role0CloudFormation0Arn"},
+                                    "StackName": "ExampleChaliceAppStack",
+                                    "TemplatePath": "CompiledCfnTemplate::transformed.yaml"
+                                },
+                                "InputArtifacts": [
+                                    {"Name":  "CompiledCfnTemplate"}
+                                ]
+                            },
+                            {
+                                "Name": "deploy-1",
+                                "RunOrder": 2,
+                                "ActionTypeId": {
+                                    "Category": "Deploy",
+                                    "Owner": "AWS",
+                                    "Provider": "CloudFormation",
+                                    "Version": "1"
+                                },
+                                "Configuration": {
+                                    "ActionMode": "CHANGE_SET_EXECUTE",
+                                    "ChangeSetName": "ExampleChaliceAppChangeSet",
+                                    "RoleArn": {"Ref": "Role0CloudFormation0Arn"},
+                                    "StackName": "ExampleChaliceAppStack",
+                                    "OutputFileName": "StackOutputs.json"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
