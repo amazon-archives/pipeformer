@@ -14,7 +14,7 @@
 import getpass
 import logging
 import os
-from typing import Dict, Callable, Optional
+from typing import Callable, Dict, Optional
 
 import attr
 import boto3

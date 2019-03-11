@@ -67,7 +67,7 @@ class Deployer:
         if self._input_handler is None:
             self._input_handler = DefaultInputHandler(
                 stack_namer=partial(self._cache.physical_resource_name, self._inputs_stack_logical_name()),
-                botocore_session=self._botocore_session
+                botocore_session=self._botocore_session,
             )
 
     def _collect_inputs(self):

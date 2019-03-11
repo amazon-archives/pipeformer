@@ -60,15 +60,7 @@ def _cloudformation_role() -> iam.Role:
             )
         ]
     )
-    policy = AWS.PolicyDocument(
-        Statement=[
-            AWS.Statement(
-                Effect=AWS.Allow,
-                Action=[AWS.Action("*")],
-                Resource=["*"]
-            )
-        ]
-    )
+    policy = AWS.PolicyDocument(Statement=[AWS.Statement(Effect=AWS.Allow, Action=[AWS.Action("*")], Resource=["*"])])
     return iam.Role(
         resource_name(iam.Role, "CloudFormation"),
         AssumeRolePolicyDocument=assume_policy,
