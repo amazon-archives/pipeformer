@@ -83,11 +83,19 @@ class CloudFormationPhysicalResourceCache:
     )
 
     def _describe_resource(self, logical_resource_name: str) -> Dict:
-        """"""
+        """Describe the requested resource.
+
+        :param str logical_resource_name: Logical resource name of resource to describe
+        :returns: result from ``describe_stack_resource`` call
+        :rtype: dict
+        """
         return self._client.describe_stack_resource(StackName=self._stack_name, LogicalResourceId=logical_resource_name)
 
     def wait_until_resource_is_complete(self, logical_resource_name: str):
-        """"""
+        """Wait until the specified resource is complete.
+
+        :param str logical_resource_name: Logical resource name of resource
+        """
         response = self.wait_until_resource_exists_in_stack(logical_resource_name)
         if not response["StackResourceDetail"].get("ResourceStatus", ""):
             response = self._wait_until_field_exists(logical_resource_name, "ResourceStatus")
@@ -104,7 +112,10 @@ class CloudFormationPhysicalResourceCache:
                 raise Exception(f'Resource creation failed. Resource "{logical_resource_name}" status: "{status}"')
 
     def wait_until_resource_exists_in_stack(self, logical_resource_name: str) -> Dict:
-        """"""
+        """Wait until the specified resource exists.
+
+        :param str logical_resource_name: Logical resource name of resource
+        """
         resource_attempts = 1
         while True:
             _LOGGER.debug(
@@ -135,6 +146,10 @@ class CloudFormationPhysicalResourceCache:
         """Keep trying to describe a resource until it has the requested field.
 
         Wait 5 seconds between attempts.
+
+        :param str logical_resource_name: Logical resource name of resource
+        :param str field_name: Field in resource details to wait for
+        :returns: results from ``describe_stack_resource`` call
         """
         resource_attempts = 1
         response = self.wait_until_resource_exists_in_stack(logical_resource_name)
@@ -154,7 +169,11 @@ class CloudFormationPhysicalResourceCache:
         return response
 
     def physical_resource_name(self, logical_resource_name: str) -> str:
-        """Find the physical resource name given its logical resource name."""
+        """Find the physical resource name given its logical resource name.
+        If the resource does not exist yet, wait until it does.
+
+        :param str logical_resource_name: Logical resource name of resource
+        """
         try:
             response = self._cache[logical_resource_name]
         except KeyError:
