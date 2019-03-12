@@ -16,11 +16,10 @@ from typing import Dict
 
 import attr
 import oyaml as yaml
-from attr.validators import instance_of, optional
+from attr.validators import deep_iterable, deep_mapping, instance_of, optional
 from troposphere import Ref, Sub, Template, cloudformation, secretsmanager, ssm
 
 from .util import reference_name, resource_name
-from .validators import deep_iterable, deep_mapping
 
 __all__ = ("Config", "PipelineStage", "PipelineAction", "Input", "ProjectTemplates", "WaitConditionStack", "Pipeline")
 _STRING_STRING_MAP = deep_mapping(key_validator=instance_of(str), value_validator=instance_of(str))

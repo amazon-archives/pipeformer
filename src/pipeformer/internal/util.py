@@ -18,12 +18,11 @@ from typing import Dict
 import attr
 import awacs.iam
 import awacs.s3
-from attr.validators import instance_of
+from attr.validators import instance_of, deep_mapping
 from botocore.exceptions import ClientError
 from troposphere import AWS_ACCOUNT_ID, AWS_PARTITION, AWS_REGION, AWSObject, Sub
 
 from pipeformer.identifiers import LOGGER_NAME
-from pipeformer.internal.validators import deep_mapping
 
 VALUE_SEPARATOR: str = "0"
 MAX_RESOURCE_ATTEMPTS: int = 20

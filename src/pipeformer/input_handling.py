@@ -20,12 +20,11 @@ import attr
 import boto3
 import boto3.session
 import botocore.session
-from attr.validators import instance_of
+from attr.validators import instance_of, is_callable
 
 from pipeformer.identifiers import LOGGER_NAME
 from pipeformer.internal.structures import Input
 from pipeformer.internal.util import CloudFormationPhysicalResourceCache
-from pipeformer.internal.validators import is_callable
 
 _LOGGER = logging.getLogger(LOGGER_NAME)
 

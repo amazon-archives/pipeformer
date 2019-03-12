@@ -14,11 +14,10 @@
 from typing import Iterable
 
 import attr
-from attr.validators import instance_of
+from attr.validators import deep_mapping, instance_of
 from troposphere import Join
 
 from .structures import Input
-from .validators import deep_mapping
 
 INPUT_TAG = ["{INPUT:", "}"]
 _PRIMITIVE_TYPES = (int, float, complex, bool, type(None))
