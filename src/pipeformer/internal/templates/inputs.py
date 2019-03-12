@@ -24,9 +24,9 @@ __all__ = ("build",)
 def _secret_value(resource: Input, tags: Tags, cmk_arn: Ref) -> secretsmanager.Secret:
     """Construct a Secrets Manager secret to store the input value.
 
-    :param Input resource:
-    :param Tags tags:
-    :param Ref cmk_arn:
+    :param Input resource: Input for which to create secret
+    :param Tags tags: Tags to set on secret
+    :param Ref cmk_arn: Key with which to protect secret
     :return: Constructed resource
     :rtype: secretsmanager.Secret
     """
