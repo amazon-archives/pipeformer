@@ -44,6 +44,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx_autodoc_typehints",
 ]
 napoleon_include_special_with_doc = False
 

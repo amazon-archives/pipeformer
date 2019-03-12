@@ -1,27 +1,29 @@
 .. include:: ../README.rst
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contributing
+    :maxdepth: 2
+    :caption: Project Operations
 
-    ../CODE_OF_CONDUCT.rst
-    ../CONTRIBUTING.rst
+    code_of_conduct
+    contributing
+    versioning
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Project Details
+
+    config_format
+    resources
+
+***
+API
+***
 
 .. toctree::
    :maxdepth: 2
-   :caption: REPLACEME
+   :caption: Public API
 
-   lib/REPLACEME
-   lib/REPLACEME
-   lib/REPLACEME
-
-.. toctree::
-   :maxdepth: 2
-   :caption: REPLACEME
-
-   lib/REPLACEME
-   lib/REPLACEME
-   lib/REPLACEME
+   lib/api/index
 
 .. toctree::
    :maxdepth: 1
