@@ -18,6 +18,8 @@ from pipeformer.internal.util import reference_name, resource_name
 
 from . import project_tags
 
+__all__ = ("build",)
+
 
 def _secret_value(resource: Input, tags: Tags, cmk_arn: Ref) -> secretsmanager.Secret:
     """Construct a Secrets Manager secret to store the input value.

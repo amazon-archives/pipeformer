@@ -28,6 +28,12 @@ VALUE_SEPARATOR: str = "0"
 MAX_RESOURCE_ATTEMPTS: int = 20
 WAIT_PER_ATTEMPT: int = 5
 _LOGGER = logging.getLogger(LOGGER_NAME)
+__all__ = (
+    "resource_name",
+    "reference_name",
+    "account_arn",
+    "CloudFormationPhysicalResourceCache"
+)
 
 
 def resource_name(resource_type: AWSObject, name: str) -> str:

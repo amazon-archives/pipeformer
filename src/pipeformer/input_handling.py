@@ -27,6 +27,7 @@ from pipeformer.internal.structures import Input
 from pipeformer.internal.util import CloudFormationPhysicalResourceCache
 
 _LOGGER = logging.getLogger(LOGGER_NAME)
+__all__ = ("DefaultInputHandler", "InputHandler")
 
 
 class InputHandler:

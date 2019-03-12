@@ -16,9 +16,10 @@ from typing import Dict, Iterator
 
 from pipeformer.identifiers import LOGGER_NAME
 
-LOGGING_LEVELS: Dict[int, int] = {0: logging.CRITICAL, 1: logging.INFO, 2: logging.DEBUG}
-MAX_LOGGING_LEVEL: int = 2
-FORMAT_STRING: str = "%(asctime)s - %(threadName)s - %(name)s - %(levelname)s - %(message)s"
+__all__ = ("setup_logger",)
+_LOGGING_LEVELS: Dict[int, int] = {0: logging.CRITICAL, 1: logging.INFO, 2: logging.DEBUG}
+_MAX_LOGGING_LEVEL: int = 2
+_FORMAT_STRING: str = "%(asctime)s - %(threadName)s - %(name)s - %(levelname)s - %(message)s"
 
 
 class _BlacklistFilter(logging.Filter):  # pylint: disable=too-few-public-methods
@@ -56,9 +57,9 @@ def _logging_levels(verbosity: int, quiet: bool) -> Iterator[int]:
     if verbosity is None or verbosity <= 0:
         return logging.WARNING, logging.CRITICAL
 
-    normalized_local = min(verbosity, MAX_LOGGING_LEVEL)
-    normalized_root = min(verbosity - normalized_local, MAX_LOGGING_LEVEL)
-    return LOGGING_LEVELS[normalized_local], LOGGING_LEVELS[normalized_root]
+    normalized_local = min(verbosity, _MAX_LOGGING_LEVEL)
+    normalized_root = min(verbosity - normalized_local, _MAX_LOGGING_LEVEL)
+    return _LOGGING_LEVELS[normalized_local], _LOGGING_LEVELS[normalized_root]
 
 
 def setup_logger(verbosity: int, quiet: bool):
@@ -69,7 +70,7 @@ def setup_logger(verbosity: int, quiet: bool):
     """
     local_logging_level, root_logging_level = _logging_levels(verbosity, quiet)
 
-    formatter = logging.Formatter(FORMAT_STRING)
+    formatter = logging.Formatter(_FORMAT_STRING)
 
     local_handler = logging.StreamHandler()
     local_handler.setFormatter(formatter)

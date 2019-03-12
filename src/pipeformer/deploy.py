@@ -33,6 +33,7 @@ from pipeformer.internal.template_builder import config_to_templates
 from pipeformer.internal.util import VALUE_SEPARATOR, CloudFormationPhysicalResourceCache, resource_name
 
 _LOGGER = logging.getLogger(LOGGER_NAME)
+__all__ = ("Deployer",)
 
 
 @attr.s

@@ -19,8 +19,9 @@ from troposphere import Join
 
 from .structures import Input
 
-INPUT_TAG = ["{INPUT:", "}"]
+_INPUT_TAG = ["{INPUT:", "}"]
 _PRIMITIVE_TYPES = (int, float, complex, bool, type(None))
+__all__ = ("InputResolver",)
 
 
 def _tag_in_string(source: str, start: str, end: str) -> bool:
@@ -63,7 +64,7 @@ class InputResolver:
 
     def __expand_values(self, value):
         """"""
-        prefix, name, suffix = _value_to_triplet(value, *INPUT_TAG)
+        prefix, name, suffix = _value_to_triplet(value, *_INPUT_TAG)
 
         input_definition = self._inputs[name]
         reference = input_definition.dynamic_reference()
@@ -79,7 +80,7 @@ class InputResolver:
         if not isinstance(value, str):
             return InputResolver(wrapped=value, inputs=self._inputs, required_inputs=self.required_inputs)
 
-        if not _tag_in_string(value, *INPUT_TAG):
+        if not _tag_in_string(value, *_INPUT_TAG):
             return value
 
         return Join("", self.__expand_values(value))

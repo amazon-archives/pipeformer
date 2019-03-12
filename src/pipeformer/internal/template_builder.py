@@ -15,6 +15,8 @@ from pipeformer.internal.templates import codepipeline, core, iam, inputs
 
 from .structures import Config, ProjectTemplates
 
+__all__ = ("config_to_templates",)
+
 
 def config_to_templates(project: Config) -> ProjectTemplates:
     """"""

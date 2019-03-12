@@ -30,6 +30,8 @@ from troposphere import AWS_STACK_NAME, Output, Parameter, Sub, Template, iam, k
 from pipeformer.internal.structures import Config
 from pipeformer.internal.util import account_arn, reference_name, resource_name
 
+__all__ = ("build",)
+
 
 def _policy_name(name: str):
     """Construct the policy name given a logical name.
