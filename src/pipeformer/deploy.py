@@ -37,7 +37,13 @@ _LOGGER = logging.getLogger(LOGGER_NAME)
 
 @attr.s
 class Deployer:
-    """"""
+    """Helper client to manage deploying a set of stacks.
+
+    :param Config project: Project configuration to use
+    :param str stack_prefix: Stack prefix (optional: if not provided, the project name from the config will be used)
+    :param botocore.session.Session botocore_session: Pre-configured botocore session (optional)
+    :param InputHandler input_handler: Pre-configured input handler to use (optional)
+    """
 
     _project: Config = attr.ib(validator=instance_of(Config))
     _stack_prefix: Optional[str] = attr.ib(default=None, validator=optional(instance_of(str)))
@@ -45,12 +51,13 @@ class Deployer:
         default=attr.Factory(botocore.session.Session), validator=instance_of(botocore.session.Session)
     )
     _input_handler: InputHandler = attr.ib(default=None, validator=optional(instance_of(InputHandler)))
-    __templates: Optional[ProjectTemplates] = None
+    _actual_templates: Optional[ProjectTemplates] = None
     _template_urls: Optional[Dict[str, str]] = None
     _inputs_collected: Optional[bool] = None
     _cache: Optional[CloudFormationPhysicalResourceCache] = None
 
     def __attrs_post_init__(self):
+        """Initialize all needed clients and resources."""
         boto3_session = boto3.session.Session(botocore_session=self._botocore_session)
         self._cloudformation = boto3_session.client("cloudformation")
         self._s3 = boto3_session.client("s3")
@@ -71,33 +78,39 @@ class Deployer:
             )
 
     def _collect_inputs(self):
-        """"""
+        """Collect inputs from user."""
         # TODO: Should we re-prompt for input values that are already known?
         self._input_handler.collect_inputs(self._project.inputs)
         self._inputs_collected = True
 
     @property
     def _templates(self):
-        """"""
+        """Lazily load templates from config.
+        This is necessary because the inputs need to be collected before the templates are built.
+        """
         if not self._inputs_collected:
             raise Exception("Inputs have not yet been collected.")
 
-        if self.__templates is None:
-            self.__templates = config_to_templates(self._project)
+        if self._actual_templates is None:
+            self._actual_templates = config_to_templates(self._project)
 
-        return self.__templates
+        return self._actual_templates
 
     @staticmethod
     def _artifacts_bucket_logical_name() -> str:
-        """"""
+        """Determine the logical name for the artifacts S3 bucket."""
         return resource_name(s3.Bucket, "Artifacts")
 
     def _wait_for_artifacts_bucket(self):
-        """"""
+        """Wait until the artifacts bucket is created."""
         self._cache.wait_until_resource_is_complete(self._artifacts_bucket_logical_name())
 
     def _upload_single_template(self, template_type: str, template: Template):
-        """"""
+        """Upload one template to the artifacts bucket.
+
+        :param str template_type: Template type name
+        :param Template template: Template to upload
+        """
         bucket_name = self._cache.physical_resource_name(self._artifacts_bucket_logical_name())
         _LOGGER.debug('Uploading %s template to bucket "%s"', template_type, bucket_name)
         key = f"templates/{uuid.uuid4()}"
@@ -106,7 +119,7 @@ class Deployer:
         self._template_urls[VALUE_SEPARATOR.join(("Upload", "Template", template_type))] = key
 
     def _upload_templates(self):
-        """"""
+        """Upload all templates to artifacts bucket."""
         self._upload_single_template("Inputs", self._templates.inputs)
         self._upload_single_template("Iam", self._templates.iam)
         self._upload_single_template("Pipeline", self._templates.pipeline)
@@ -114,33 +127,41 @@ class Deployer:
             self._upload_single_template(VALUE_SEPARATOR.join(("CodeBuild", "Stage", name)), stage)
 
     def _succeed_wait_condition(self, resource_logical_name: str, reason: str, data: str):
-        """"""
+        """Report success to a CloudFormation wait condition.
+
+        :param str resource_logical_name: Logical name of wait condition resource
+        :param str reason: Reason for success
+        :param str data: Data to include in wait condition report
+        """
         _LOGGER.debug('Reporting to wait condition "%s" with data "%s"', resource_logical_name, data)
         wait_condition_url = self._cache.physical_resource_name(resource_logical_name)
         message = {"Status": "SUCCESS", "Reason": reason, "UniqueId": "n/a", "Data": data}
         requests.put(url=wait_condition_url, data=json.dumps(message))
 
     def _report_templates_uploaded(self):
-        """"""
+        """Report success for all template upload wait conditions."""
         for name, value in self._template_urls.items():
             self._succeed_wait_condition(name, "Template uploaded", value)
 
     @staticmethod
     def _inputs_stack_logical_name() -> str:
-        """"""
+        """Determine the logical name for the inputs stack."""
         return resource_name(cloudformation.Stack, "Inputs")
 
     def _wait_for_inputs_stack(self):
-        """"""
+        """Wait until the inputs stack is created."""
         self._cache.wait_until_resource_is_complete(VALUE_SEPARATOR.join(("WaitFor", "Upload", "Template", "Inputs")))
         self._cache.wait_until_resource_is_complete(self._inputs_stack_logical_name())
 
-    def _report_inputs_saved(self):
-        """"""
+    def _report_input_values_saved(self):
+        """Report that the input values have all been saved."""
         self._succeed_wait_condition(VALUE_SEPARATOR.join(("Upload", "Input", "Values")), "Inputs saved", "complete")
 
     def _stack_exists(self, stack_name: str) -> bool:
-        """Determine if the stack has already been deployed."""
+        """Determine if the stack has already been deployed.
+
+        :param str stack_name: Name of CloudFormation stack for which to check
+        """
         try:
             self._cloudformation.describe_stacks(StackName=stack_name)
 
@@ -153,11 +174,11 @@ class Deployer:
             return True
 
     def _core_stack_name(self) -> str:
-        """"""
+        """Determine the core stack name."""
         return f"{self._stack_prefix}-core"
 
     def _update_existing_core_stack(self):
-        """"""
+        """Update an existing core stack."""
         _LOGGER.info("Updating existing core stack.")
 
         self._cloudformation.update_stack(
@@ -166,7 +187,7 @@ class Deployer:
         # We specifically do not want to wait for this to complete.
 
     def _deploy_new_core_stack(self):
-        """"""
+        """Deploy a new core stack."""
         _LOGGER.info("Bootstrapping new core stack.")
         self._cloudformation.create_stack(
             StackName=self._core_stack_name(),
@@ -176,7 +197,7 @@ class Deployer:
         # We specifically do not want to wait for this to complete.
 
     def _deploy_core_stack(self) -> str:
-        """"""
+        """Deploy or update the core stack"""
         if self._stack_exists(self._core_stack_name()):
             self._update_existing_core_stack()
             return "stack_update_complete"
@@ -185,13 +206,15 @@ class Deployer:
             return "stack_create_complete"
 
     def _wait_for_core_stack(self, waiter_name: str):
-        """"""
+        """Wait for the core stack creation to complete."""
         waiter = self._cloudformation.get_waiter(waiter_name)
         waiter.wait(StackName=self._core_stack_name(), WaiterConfig=dict(Delay=10))
         _LOGGER.info("Stack deploy/update complete!")
 
     def deploy_standalone(self):
-        """"""
+        """Deploy a standalone PipeFormer application.
+        This will create all necessary resources including all IAM Roles and a KMS CMK.
+        """
         _LOGGER.info("Collecting user inputs.")
         self._collect_inputs()
 
@@ -218,7 +241,7 @@ class Deployer:
         self._input_handler.save_inputs(inputs=self._project.inputs)
 
         _LOGGER.info("Reporting inputs status to wait condition.")
-        self._report_inputs_saved()
+        self._report_input_values_saved()
 
         _LOGGER.info("Waiting for stacks to finish deploying")
         self._wait_for_core_stack(waiter_name)
