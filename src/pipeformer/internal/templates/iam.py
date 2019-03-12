@@ -32,11 +32,21 @@ from pipeformer.internal.util import account_arn, reference_name, resource_name
 
 
 def _policy_name(name: str):
+    """Construct the policy name given a logical name.
+
+    :param str name: Logical name
+    :returns: Stack-specific name resolver
+    :rtype: Sub
+    """
     return Sub(f"${{{AWS_STACK_NAME}}}-{name}")
 
 
 def _cloudformation_role() -> iam.Role:
-    """"""
+    """Construct a role for use by CloudFormation.
+
+    :return: Constructed Role
+    :rtype: iam.Role
+    """
     assume_policy = AWS.PolicyDocument(
         Statement=[
             AWS.Statement(
@@ -47,6 +57,14 @@ def _cloudformation_role() -> iam.Role:
         ]
     )
     # TODO: Figure out how to scope this down without breaking IAM
+    # IAM policies break if there is a * in certain fields,
+    # so this does not work:
+    # arn:PARTITION:*:REGION:ACCOUNT:*
+    #
+    # Ideally, I would like to define:
+    # arn:PARTITION:*:REGION:ACCOUNT:*
+    # arn:PARTITION:s3:::*
+    # arn:PARTITION:iam::ACCOUNT:*
     _good_policy = AWS.PolicyDocument(
         Statement=[
             AWS.Statement(
@@ -69,7 +87,14 @@ def _cloudformation_role() -> iam.Role:
 
 
 def _codepipeline_role(artifacts_bucket: Parameter, resources_bucket: Parameter, cmk: Parameter) -> iam.Role:
-    """"""
+    """Construct a role for use by CodePipeline.
+
+    :param Parameter artifacts_bucket: Artifacts bucket parameter
+    :param Parameter resources_bucket: Resources bucket parameter
+    :param Parameter cmk: KMS CMK parameter
+    :return: Constructed Role
+    :rtype: iam.Role
+    """
     assume_policy = AWS.PolicyDocument(
         Statement=[
             AWS.Statement(
@@ -140,7 +165,14 @@ def _codepipeline_role(artifacts_bucket: Parameter, resources_bucket: Parameter,
 
 
 def _codebuild_role(artifacts_bucket: Parameter, resources_bucket: Parameter, cmk: Parameter) -> iam.Role:
-    """"""
+    """Construct a role for use by CodeBuild.
+
+    :param Parameter artifacts_bucket: Artifacts bucket parameter
+    :param Parameter resources_bucket: Resources bucket parameter
+    :param Parameter cmk: KMS CMK parameter
+    :return: Constructed Role
+    :rtype: iam.Role
+    """
     assume_policy = AWS.PolicyDocument(
         Statement=[
             AWS.Statement(
@@ -175,7 +207,12 @@ def _codebuild_role(artifacts_bucket: Parameter, resources_bucket: Parameter, cm
 
 
 def build(project: Config) -> Template:
-    """"""
+    """Build an IAM stack template for the provided project.
+
+    :param Config project: Source project
+    :return: Generated IAM stack template
+    :rtype: Template
+    """
     resources = Template(Description=f"IAM resources for pipeformer-managed project: {project.name}")
 
     artifacts_bucket_arn = resources.add_parameter(
