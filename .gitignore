@@ -10,7 +10,7 @@
 build
 dist
 docs/build
-/doc/generated/*
+generated/
 
 # Bytecode Artifacts
 *.pyc
