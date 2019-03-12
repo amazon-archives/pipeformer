@@ -21,7 +21,7 @@ from .structures import Input
 
 _INPUT_TAG = ["{INPUT:", "}"]
 _PRIMITIVE_TYPES = (int, float, complex, bool, type(None))
-_PRIMITIVE_TYPE_TYPES = Union[int, float, complex, bool, Type[None]]
+_PRIMITIVE_TYPE_TYPES = Union[int, float, complex, bool, None]
 __all__ = ("InputResolver",)
 
 
@@ -104,7 +104,7 @@ class InputResolver:
         self.required_inputs.add(name)
         return prefix, reference, suffix
 
-    def __convert_value(self, value) -> Union[_PRIMITIVE_TYPES, "InputResolver", str, Join]:
+    def __convert_value(self, value) -> Union[_PRIMITIVE_TYPE_TYPES, "InputResolver", str, Join]:
         """Convert a value from the wrapped object to a value that can insert input resolutions."""
         if isinstance(value, _PRIMITIVE_TYPES):
             return value
