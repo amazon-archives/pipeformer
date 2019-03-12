@@ -19,7 +19,12 @@ __all__ = ("config_to_templates",)
 
 
 def config_to_templates(project: Config) -> ProjectTemplates:
-    """"""
+    """Construct all standalone templates from project.
+
+    :param Config project: Source project
+    :return: Constructed templates
+    :rtype: ProjectTemplates
+    """
     iam_template = iam.build(project)
 
     inputs_template = inputs.build(project)
