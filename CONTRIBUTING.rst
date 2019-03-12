@@ -83,9 +83,9 @@ We may ask you to sign a `Contributor License Agreement (CLA)`_ for larger chang
 .. _recently closed: https://github.com/awslabs/pipeformer/issues?utf8=%E2%9C%93&q=is%3Aissue%20is%3Aclosed%20
 .. _help wanted: https://github.com/awslabs/pipeformer/labels/help%20wanted
 .. _LICENSE: https://github.com/awslabs/pipeformer/blob/master/LICENSE
-.. _forking a repository: https://help.github.com/articles/fork-a-repo/
-.. _creating a pull request: https://help.github.com/articles/creating-a-pull-request/
+.. _forking a repository: https://help.github.com/en/articles/fork-a-repo
+.. _creating a pull request: https://help.github.com/en/articles/creating-a-pull-request
 .. _Amazon Open Source Code of Conduct: https://aws.github.io/code-of-conduct
 .. _Code of Conduct FAQ: https://aws.github.io/code-of-conduct-faq
-.. _vulnerability reporting page: http://aws.amazon.com/security/vulnerability-reporting/
-.. _Contributor License Agreement (CLA): http://en.wikipedia.org/wiki/Contributor_License_Agreement
+.. _vulnerability reporting page: https://aws.amazon.com/security/vulnerability-reporting/
+.. _Contributor License Agreement (CLA): https://en.wikipedia.org/wiki/Contributor_License_Agreement
