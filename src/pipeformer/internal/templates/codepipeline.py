@@ -22,6 +22,7 @@ from pipeformer.internal.util import VALUE_SEPARATOR, reference_name, resource_n
 
 from . import codebuild as codebuild_template, project_tags
 
+__all__ = ("build",)
 _ACTION_TYPE_IDS = {
     "GitHub": codepipeline.ActionTypeId(Category="Source", Owner="ThirdParty", Provider="GitHub", Version="1"),
     "CodeBuild": codepipeline.ActionTypeId(Category="Build", Owner="AWS", Provider="CodeBuild", Version="1"),

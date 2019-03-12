@@ -21,6 +21,8 @@ from pipeformer.internal.util import VALUE_SEPARATOR, account_arn, reference_nam
 
 from . import project_tags
 
+__all__ = ("build",)
+
 
 def _project_key(project: Config) -> kms.Key:
     """"""
