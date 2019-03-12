@@ -31,26 +31,41 @@ _LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 class InputHandler:
-    """"""
+    """Parent class for all classes used for collecting user input."""
 
     def collect_secret(self, secret: Input):
-        """"""
+        """Collect a secret input value from the user.
+
+        :param Input secret: Input to collect from user
+        """
         raise NotImplementedError()
 
     def save_secret(self, secret: Input):
-        """"""
+        """Save a secret input value.
+
+        :param Input secret: Input to save
+        """
         raise NotImplementedError()
 
-    def collect_parameter(self, secret: Input):
-        """"""
+    def collect_parameter(self, parameter: Input):
+        """Collect a non-secret input value from the user.
+
+        :param Input parameter: Input to collect from user
+        """
         raise NotImplementedError()
 
-    def save_parameter(self, secret: Input):
-        """"""
+    def save_parameter(self, parameter: Input):
+        """Save a non-secret input value.
+
+        :param Input parameter: Input to save
+        """
         raise NotImplementedError()
 
     def collect_inputs(self, inputs: Dict[str, Input]):
-        """"""
+        """Collect all input values.
+
+        :param inputs: Mapping of input names to inputs
+        """
         for each in inputs.values():
             if each.secret:
                 self.collect_secret(each)
@@ -58,7 +73,10 @@ class InputHandler:
                 self.collect_parameter(each)
 
     def save_inputs(self, inputs: Dict[str, Input]):
-        """"""
+        """Save all input values.
+
+        :param inputs: Mapping of input names to inputs
+        """
         for each in inputs.values():
             if each.secret:
                 self.save_secret(each)
@@ -68,7 +86,15 @@ class InputHandler:
 
 @attr.s
 class DefaultInputHandler(InputHandler):
-    """"""
+    """The default input handler.
+
+    Inputs are collected from the command line.
+    Secrets are saved to Secrets Manager.
+    Parameters are saved to Parameter Store.
+
+    :param callable stack_namer: Callable that returns the stack name
+    :param botocore.session.Session botocore_session: Pre-configured botocore session (optional)
+    """
 
     _stack_namer: Callable[[], str] = attr.ib(validator=is_callable())
     _botocore_session: botocore.session.Session = attr.ib(
@@ -77,6 +103,7 @@ class DefaultInputHandler(InputHandler):
     _cache: Optional[CloudFormationPhysicalResourceCache] = None
 
     def __attrs_post_init__(self):
+        """Initialize all AWS SDK clients."""
         boto3_session = boto3.session.Session(botocore_session=self._botocore_session)
         self._secrets_manager = boto3_session.client("secretsmanager")
         self._parameter_store = boto3_session.client("ssm")
@@ -84,7 +111,13 @@ class DefaultInputHandler(InputHandler):
 
     @property
     def cache(self):
-        """"""
+        """Lazily create the physical resource cache and return it for use.
+        This is necessary because the resources do not exist yet when we create this handler
+        (needed for collecting inputs)
+        but will exist by the time we need to save those inputs.
+
+        :returns: Cache resource
+        """
         if self._cache is not None:
             return self._cache
 
@@ -93,32 +126,53 @@ class DefaultInputHandler(InputHandler):
 
     @staticmethod
     def _input_prompt(value: Input) -> str:
-        """"""
+        """Generate the input prompt message for an input.
+
+        :param Input value: Input for which to create input prompt
+        :returns: Formatted input prompt message
+        :rtype: str
+        """
         return os.linesep.join((value.description, f"{value.name}: ")).lstrip()
 
     def collect_secret(self, secret: Input):
-        """"""
+        """Collect a secret input value from the user via the CLI.
+
+        :param Input secret: Input to collect from user
+        """
         secret.value = getpass.getpass(prompt=self._input_prompt(secret))
 
     @staticmethod
     def _assert_input_set(value: Input):
-        """"""
+        """Verify that an input has a value set.
+
+        :param Input value: Input to verify
+        :raises ValueError: if value is not set
+        """
         if value.value is None:
             raise ValueError(f'Value for input "{value.name}" is not set.')
 
     def save_secret(self, secret: Input):
-        """"""
+        """Save a secret input value to Secrets Manager.
+
+        :param Input secret: Input to save
+        """
         _LOGGER.debug(f'Saving secret value for input "{secret.name}"')
         self._assert_input_set(secret)
         secret_id = self.cache.physical_resource_name(secret.resource_name())
         self._secrets_manager.update_secret(SecretId=secret_id, SecretString=secret.value)
 
     def collect_parameter(self, parameter: Input):
-        """"""
+        """Collect a non-secret input value from the user via the CLI.
+
+        :param Input parameter: Input to collect from user
+        """
         parameter.value = input(self._input_prompt(parameter))
 
     def save_parameter(self, parameter: Input):
-        """"""
+        """Save a non-secret input value to Parameter Store.
+
+        :param Input parameter: Input to save
+        """
         _LOGGER.debug(f'Saving parameter value for input "{parameter.name}"')
         self._assert_input_set(parameter)
         parameter_name = self.cache.physical_resource_name(parameter.resource_name())
