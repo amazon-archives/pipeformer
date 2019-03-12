@@ -64,7 +64,7 @@ How to Use
 **********
 
 1. Define your configuration file.
-1. Deploy with pipeformer.
+2. Deploy with pipeformer.
 
 User Experience
 ===============
