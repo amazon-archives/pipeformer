@@ -25,7 +25,7 @@ _FORMAT_STRING: str = "%(asctime)s - %(threadName)s - %(name)s - %(levelname)s -
 class _BlacklistFilter(logging.Filter):  # pylint: disable=too-few-public-methods
     """Logging filter that allows blacklisting of certain logger names.
 
-    :param str *args: logger names to ignore
+    :param *args: logger names to ignore
     """
 
     def __init__(self, *args: str):
@@ -38,7 +38,6 @@ class _BlacklistFilter(logging.Filter):  # pylint: disable=too-few-public-method
 
         :param record: Logging record to filter
         :type record: logging.LogRecord
-        :rtype: bool
         """
         return record.name not in self.__blacklist
 
@@ -46,10 +45,9 @@ class _BlacklistFilter(logging.Filter):  # pylint: disable=too-few-public-method
 def _logging_levels(verbosity: int, quiet: bool) -> Iterator[int]:
     """Determines the proper logging levels given required verbosity level and quiet.
 
-    :param int verbosity: Requested level of verbosity
-    :param bool quiet: Suppresses all logging when true
+    :param verbosity: Requested level of verbosity
+    :param quiet: Suppresses all logging when true
     :returns: local and root logging levels
-    :rtype: list of int
     """
     if quiet:
         return logging.CRITICAL, logging.CRITICAL
@@ -65,8 +63,8 @@ def _logging_levels(verbosity: int, quiet: bool) -> Iterator[int]:
 def setup_logger(verbosity: int, quiet: bool):
     """Sets up the logger.
 
-    :param int verbosity: Requested level of verbosity
-    :param bool quiet: Suppresses all logging when true
+    :param verbosity: Requested level of verbosity
+    :param quiet: Suppresses all logging when true
     """
     local_logging_level, root_logging_level = _logging_levels(verbosity, quiet)
 

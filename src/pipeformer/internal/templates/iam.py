@@ -36,9 +36,8 @@ __all__ = ("build",)
 def _policy_name(name: str):
     """Construct the policy name given a logical name.
 
-    :param str name: Logical name
+    :param name: Logical name
     :returns: Stack-specific name resolver
-    :rtype: Sub
     """
     return Sub(f"${{{AWS_STACK_NAME}}}-{name}")
 
@@ -47,7 +46,6 @@ def _cloudformation_role() -> iam.Role:
     """Construct a role for use by CloudFormation.
 
     :return: Constructed Role
-    :rtype: iam.Role
     """
     assume_policy = AWS.PolicyDocument(
         Statement=[
@@ -91,11 +89,10 @@ def _cloudformation_role() -> iam.Role:
 def _codepipeline_role(artifacts_bucket: Parameter, resources_bucket: Parameter, cmk: Parameter) -> iam.Role:
     """Construct a role for use by CodePipeline.
 
-    :param Parameter artifacts_bucket: Artifacts bucket parameter
-    :param Parameter resources_bucket: Resources bucket parameter
-    :param Parameter cmk: KMS CMK parameter
+    :param artifacts_bucket: Artifacts bucket parameter
+    :param resources_bucket: Resources bucket parameter
+    :param cmk: KMS CMK parameter
     :return: Constructed Role
-    :rtype: iam.Role
     """
     assume_policy = AWS.PolicyDocument(
         Statement=[
@@ -169,11 +166,10 @@ def _codepipeline_role(artifacts_bucket: Parameter, resources_bucket: Parameter,
 def _codebuild_role(artifacts_bucket: Parameter, resources_bucket: Parameter, cmk: Parameter) -> iam.Role:
     """Construct a role for use by CodeBuild.
 
-    :param Parameter artifacts_bucket: Artifacts bucket parameter
-    :param Parameter resources_bucket: Resources bucket parameter
-    :param Parameter cmk: KMS CMK parameter
+    :param artifacts_bucket: Artifacts bucket parameter
+    :param resources_bucket: Resources bucket parameter
+    :param cmk: KMS CMK parameter
     :return: Constructed Role
-    :rtype: iam.Role
     """
     assume_policy = AWS.PolicyDocument(
         Statement=[
@@ -211,9 +207,8 @@ def _codebuild_role(artifacts_bucket: Parameter, resources_bucket: Parameter, cm
 def build(project: Config) -> Template:
     """Build an IAM stack template for the provided project.
 
-    :param Config project: Source project
+    :param project: Source project
     :return: Generated IAM stack template
-    :rtype: Template
     """
     resources = Template(Description=f"IAM resources for pipeformer-managed project: {project.name}")
 

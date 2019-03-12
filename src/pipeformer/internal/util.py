@@ -39,8 +39,8 @@ __all__ = (
 def resource_name(resource_type: AWSObject, name: str) -> str:
     """Build the resource logical name for use in stacks.
 
-    :param AWSObject resource_type: Resource type
-    :param str name: Naive logical name
+    :param resource_type: Resource type
+    :param name: Naive logical name
     :return: Specific logical name
     """
     type_name = resource_type.resource_type.split("::")[-1]
@@ -50,8 +50,8 @@ def resource_name(resource_type: AWSObject, name: str) -> str:
 def reference_name(name: str, value_type: str) -> str:
     """Build the reference name for a resource. Used in stack outputs and parameters.
 
-    :param str name: Resource name
-    :param str value_type: Value type
+    :param name: Resource name
+    :param value_type: Value type
     :return: Specific reference name
     """
     return VALUE_SEPARATOR.join((name, value_type))
@@ -60,8 +60,8 @@ def reference_name(name: str, value_type: str) -> str:
 def account_arn(service_prefix: str, resource: str) -> Sub:
     """Build an IAM policy Arn pattern scoping down as for as possible for the specified service.
 
-    :param str service_prefix: Service prefix string
-    :param str resource: Any resource data to finish Arn
+    :param service_prefix: Service prefix string
+    :param resource: Any resource data to finish Arn
     :return: Constructed Sub structure that will resolve to the scoped down Arn
     """
     if service_prefix in (awacs.iam.prefix, awacs.s3.prefix):
@@ -79,7 +79,11 @@ def account_arn(service_prefix: str, resource: str) -> Sub:
 
 @attr.s
 class CloudFormationPhysicalResourceCache:
-    """Cache for persistent information about CloudFormation stack resources."""
+    """Cache for persistent information about CloudFormation stack resources.
+
+    :param stack_name: Name of target stack
+    :param cache: Pre-populated cache mapping logical resource names to physical resource names (optional)
+    """
 
     _client = attr.ib()
     _stack_name: str = attr.ib(validator=instance_of(str))
@@ -91,16 +95,15 @@ class CloudFormationPhysicalResourceCache:
     def _describe_resource(self, logical_resource_name: str) -> Dict:
         """Describe the requested resource.
 
-        :param str logical_resource_name: Logical resource name of resource to describe
+        :param logical_resource_name: Logical resource name of resource to describe
         :returns: result from ``describe_stack_resource`` call
-        :rtype: dict
         """
         return self._client.describe_stack_resource(StackName=self._stack_name, LogicalResourceId=logical_resource_name)
 
     def wait_until_resource_is_complete(self, logical_resource_name: str):
         """Wait until the specified resource is complete.
 
-        :param str logical_resource_name: Logical resource name of resource
+        :param logical_resource_name: Logical resource name of resource
         """
         response = self.wait_until_resource_exists_in_stack(logical_resource_name)
         if not response["StackResourceDetail"].get("ResourceStatus", ""):
@@ -120,7 +123,7 @@ class CloudFormationPhysicalResourceCache:
     def wait_until_resource_exists_in_stack(self, logical_resource_name: str) -> Dict:
         """Wait until the specified resource exists.
 
-        :param str logical_resource_name: Logical resource name of resource
+        :param logical_resource_name: Logical resource name of resource
         """
         resource_attempts = 1
         while True:
@@ -153,8 +156,8 @@ class CloudFormationPhysicalResourceCache:
 
         Wait 5 seconds between attempts.
 
-        :param str logical_resource_name: Logical resource name of resource
-        :param str field_name: Field in resource details to wait for
+        :param logical_resource_name: Logical resource name of resource
+        :param field_name: Field in resource details to wait for
         :returns: results from ``describe_stack_resource`` call
         """
         resource_attempts = 1
@@ -178,7 +181,7 @@ class CloudFormationPhysicalResourceCache:
         """Find the physical resource name given its logical resource name.
         If the resource does not exist yet, wait until it does.
 
-        :param str logical_resource_name: Logical resource name of resource
+        :param logical_resource_name: Logical resource name of resource
         """
         try:
             response = self._cache[logical_resource_name]

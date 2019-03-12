@@ -24,11 +24,10 @@ __all__ = ("build",)
 def _secret_value(resource: Input, tags: Tags, cmk_arn: Ref) -> secretsmanager.Secret:
     """Construct a Secrets Manager secret to store the input value.
 
-    :param Input resource: Input for which to create secret
-    :param Tags tags: Tags to set on secret
-    :param Ref cmk_arn: Key with which to protect secret
+    :param resource: Input for which to create secret
+    :param tags: Tags to set on secret
+    :param cmk_arn: Key with which to protect secret
     :return: Constructed resource
-    :rtype: secretsmanager.Secret
     """
     return secretsmanager.Secret(
         resource_name(secretsmanager.Secret, resource.name), KmsKeyId=cmk_arn, SecretString="REPLACEME", Tags=tags
@@ -38,9 +37,8 @@ def _secret_value(resource: Input, tags: Tags, cmk_arn: Ref) -> secretsmanager.S
 def _standard_value(resource: Input) -> ssm.Parameter:
     """Construct a Parameter Store parameter containing the input value.
 
-    :param Input resource: Input to store
+    :param resource: Input to store
     :return: Constructed resource
-    :rtype: ssm.Parameter
     """
     return ssm.Parameter(resource_name(ssm.Parameter, resource.name), Type="String", Value=resource.value)
 
@@ -48,9 +46,8 @@ def _standard_value(resource: Input) -> ssm.Parameter:
 def build(project: Config) -> Template:
     """Build an Inputs stack template from the provided project.
 
-    :param Config project: Source project
+    :param project: Source project
     :return: Generated Inputs stack template
-    :rtype: Template
     """
     inputs = Template(Description=f"Input values for pipeformer-managed project: {project.name}")
     cmk = inputs.add_parameter(Parameter(reference_name(resource_name(kms.Key, "Stack"), "Arn"), Type="String"))

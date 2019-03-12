@@ -40,10 +40,10 @@ __all__ = ("Deployer",)
 class Deployer:
     """Helper client to manage deploying a set of stacks.
 
-    :param Config project: Project configuration to use
-    :param str stack_prefix: Stack prefix (optional: if not provided, the project name from the config will be used)
-    :param botocore.session.Session botocore_session: Pre-configured botocore session (optional)
-    :param InputHandler input_handler: Pre-configured input handler to use (optional)
+    :param project: Project configuration to use
+    :param stack_prefix: Stack prefix (optional: if not provided, the project name from the config will be used)
+    :param botocore_session: Pre-configured botocore session (optional)
+    :param input_handler: Pre-configured input handler to use (optional)
     """
 
     _project: Config = attr.ib(validator=instance_of(Config))
@@ -109,8 +109,8 @@ class Deployer:
     def _upload_single_template(self, template_type: str, template: Template):
         """Upload one template to the artifacts bucket.
 
-        :param str template_type: Template type name
-        :param Template template: Template to upload
+        :param template_type: Template type name
+        :param template: Template to upload
         """
         bucket_name = self._cache.physical_resource_name(self._artifacts_bucket_logical_name())
         _LOGGER.debug('Uploading %s template to bucket "%s"', template_type, bucket_name)
@@ -130,9 +130,9 @@ class Deployer:
     def _succeed_wait_condition(self, resource_logical_name: str, reason: str, data: str):
         """Report success to a CloudFormation wait condition.
 
-        :param str resource_logical_name: Logical name of wait condition resource
-        :param str reason: Reason for success
-        :param str data: Data to include in wait condition report
+        :param resource_logical_name: Logical name of wait condition resource
+        :param reason: Reason for success
+        :param data: Data to include in wait condition report
         """
         _LOGGER.debug('Reporting to wait condition "%s" with data "%s"', resource_logical_name, data)
         wait_condition_url = self._cache.physical_resource_name(resource_logical_name)
@@ -161,7 +161,7 @@ class Deployer:
     def _stack_exists(self, stack_name: str) -> bool:
         """Determine if the stack has already been deployed.
 
-        :param str stack_name: Name of CloudFormation stack for which to check
+        :param stack_name: Name of CloudFormation stack for which to check
         """
         try:
             self._cloudformation.describe_stacks(StackName=stack_name)

@@ -36,28 +36,28 @@ class InputHandler:
     def collect_secret(self, secret: Input):
         """Collect a secret input value from the user.
 
-        :param Input secret: Input to collect from user
+        :param secret: Input to collect from user
         """
         raise NotImplementedError()
 
     def save_secret(self, secret: Input):
         """Save a secret input value.
 
-        :param Input secret: Input to save
+        :param secret: Input to save
         """
         raise NotImplementedError()
 
     def collect_parameter(self, parameter: Input):
         """Collect a non-secret input value from the user.
 
-        :param Input parameter: Input to collect from user
+        :param parameter: Input to collect from user
         """
         raise NotImplementedError()
 
     def save_parameter(self, parameter: Input):
         """Save a non-secret input value.
 
-        :param Input parameter: Input to save
+        :param parameter: Input to save
         """
         raise NotImplementedError()
 
@@ -92,8 +92,8 @@ class DefaultInputHandler(InputHandler):
     Secrets are saved to Secrets Manager.
     Parameters are saved to Parameter Store.
 
-    :param callable stack_namer: Callable that returns the stack name
-    :param botocore.session.Session botocore_session: Pre-configured botocore session (optional)
+    :param stack_namer: Callable that returns the stack name
+    :param botocore_session: Pre-configured botocore session (optional)
     """
 
     _stack_namer: Callable[[], str] = attr.ib(validator=is_callable())
@@ -128,9 +128,8 @@ class DefaultInputHandler(InputHandler):
     def _input_prompt(value: Input) -> str:
         """Generate the input prompt message for an input.
 
-        :param Input value: Input for which to create input prompt
+        :param value: Input for which to create input prompt
         :returns: Formatted input prompt message
-        :rtype: str
         """
         return os.linesep.join((value.description, f"{value.name}: ")).lstrip()
 
@@ -145,7 +144,7 @@ class DefaultInputHandler(InputHandler):
     def _assert_input_set(value: Input):
         """Verify that an input has a value set.
 
-        :param Input value: Input to verify
+        :param value: Input to verify
         :raises ValueError: if value is not set
         """
         if value.value is None:
@@ -154,7 +153,7 @@ class DefaultInputHandler(InputHandler):
     def save_secret(self, secret: Input):
         """Save a secret input value to Secrets Manager.
 
-        :param Input secret: Input to save
+        :param secret: Input to save
         """
         _LOGGER.debug(f'Saving secret value for input "{secret.name}"')
         self._assert_input_set(secret)
@@ -164,14 +163,14 @@ class DefaultInputHandler(InputHandler):
     def collect_parameter(self, parameter: Input):
         """Collect a non-secret input value from the user via the CLI.
 
-        :param Input parameter: Input to collect from user
+        :param parameter: Input to collect from user
         """
         parameter.value = input(self._input_prompt(parameter))
 
     def save_parameter(self, parameter: Input):
         """Save a non-secret input value to Parameter Store.
 
-        :param Input parameter: Input to save
+        :param parameter: Input to save
         """
         _LOGGER.debug(f'Saving parameter value for input "{parameter.name}"')
         self._assert_input_set(parameter)

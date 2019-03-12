@@ -28,11 +28,10 @@ __all__ = ("InputResolver",)
 def _tag_in_string(source: str, start: str, end: str) -> bool:
     """Determine if a specific tag is in a string.
 
-    :param str source: String to evaluate
-    :param str start: String that marks the start of a tag
-    :param str end: String that marks the end of a tag
+    :param source: String to evaluate
+    :param start: String that marks the start of a tag
+    :param end: String that marks the end of a tag
     :returns: Decision
-    :rtype: bool
     """
     if start not in source:
         return False
@@ -46,11 +45,10 @@ def _tag_in_string(source: str, start: str, end: str) -> bool:
 def _value_to_triplet(source: str, start: str, end: str) -> Iterable[str]:
     """Extract the first tag value from a string, splitting the source string into the parts before and after the tag.
 
-    :param str source: String to process
-    :param str start: String that marks the start of a tag
-    :param str end: String that marks the end of a tag
+    :param source: String to process
+    :param start: String that marks the start of a tag
+    :param end: String that marks the end of a tag
     :return: Split string values
-    :rtype: tuple of str
     """
     prefix, _value = source.split(start, 1)
 
@@ -71,7 +69,7 @@ class InputResolver:
 
     :param wrapped: Wrapped structure
     :param inputs: Map of input names to :class:`Input` structures
-    :param set required_inputs: Known required input (optional)
+    :param required_inputs: Known required input (optional)
     """
 
     _wrapped = attr.ib()

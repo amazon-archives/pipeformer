@@ -24,7 +24,6 @@ def _build_parser() -> argparse.ArgumentParser:
     """Construct the argument parser.
 
     :returns: Constructed argument parser
-    :rtype: argparse.ArgumentParser
     """
     parser = argparse.ArgumentParser(description="Build continuous delivery pipelines powered by AWS CodePipeline.")
 
@@ -47,9 +46,8 @@ def _build_parser() -> argparse.ArgumentParser:
 def parse_args(raw_args: Optional[Iterator[str]] = None) -> argparse.Namespace:
     """Handles argparse to collect the needed input values.
 
-    :param list raw_args: List of arguments
+    :param raw_args: List of arguments
     :returns: parsed arguments
-    :rtype: argparse.Namespace
     """
     parser = _build_parser()
     parsed_args = parser.parse_args(raw_args)

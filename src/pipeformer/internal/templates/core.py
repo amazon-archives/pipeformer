@@ -25,7 +25,11 @@ __all__ = ("build",)
 
 
 def _project_key(project: Config) -> kms.Key:
-    """"""
+    """Construct the AWS CMK that will be used to protect project resources.
+
+    :param project: Source project
+    :return: Constructed key
+    """
     policy = AWS.PolicyDocument(
         Version="2012-10-17",
         Statement=[
@@ -82,11 +86,10 @@ def _project_key(project: Config) -> kms.Key:
 def _bucket(name: str, cmk_arn: GetAtt, tags: Tags) -> s3.Bucket:
     """Construct a S3 bucket resource with default SSE-KMS using the specified CMK.
 
-    :param str name: Logical resource name
-    :param GetAtt cmk_arn: Reference to Arn of CMK resource
-    :param Tags tags: Tags to apply to bucket
+    :param name: Logical resource name
+    :param cmk_arn: Reference to Arn of CMK resource
+    :param tags: Tags to apply to bucket
     :return: Constructed S3 bucket resource
-    :rtype: s3.Bucket
     """
     return s3.Bucket(
         resource_name(s3.Bucket, name),
@@ -104,7 +107,11 @@ def _bucket(name: str, cmk_arn: GetAtt, tags: Tags) -> s3.Bucket:
 
 
 def _wait_condition_data_to_s3_url(condition: cloudformation.WaitCondition, artifacts_bucket: s3.Bucket) -> Sub:
-    """"""
+    """Build a CloudFormation ``Sub`` structure that resolves to the S3 key reported to a wait condition.
+
+    :param condition: Wait condition to reference
+    :param artifacts_bucket: Bucket to reference
+    """
     return Sub(
         f"https://${{{artifacts_bucket.title}.DomainName}}/${{key}}",
         {"key": Select(3, Split('"', condition.get_att("Data")))},
@@ -114,7 +121,12 @@ def _wait_condition_data_to_s3_url(condition: cloudformation.WaitCondition, arti
 def _wait_condition(
     type_name: str, base_name: str
 ) -> (cloudformation.WaitCondition, cloudformation.WaitConditionHandle):
-    """"""
+    """Construct a wait condition and handle.
+
+    :param type_name:
+    :param base_name:
+    :return:
+    """
     handle = cloudformation.WaitConditionHandle(VALUE_SEPARATOR.join(("Upload", type_name, base_name)))
     condition = cloudformation.WaitCondition(
         VALUE_SEPARATOR.join(("WaitFor", handle.title)), Handle=handle.ref(), Count=1, Timeout=3600
@@ -129,7 +141,15 @@ def _wait_condition_stack(
     tags: Tags,
     depends_on: Optional[Iterable] = None,
 ) -> WaitConditionStack:
-    """"""
+    """
+
+    :param base_name:
+    :param parameters:
+    :param artifacts_bucket:
+    :param tags:
+    :param depends_on:
+    :return:
+    """
     if depends_on is None:
         depends_on = []
 
@@ -145,7 +165,14 @@ def _wait_condition_stack(
 
 
 def build(project: Config, inputs_template: Template, iam_template: Template, pipeline_templates: Pipeline) -> Template:
-    """"""
+    """Construct a core stack template for a stand-alone deployment.
+
+    :param project:
+    :param inputs_template:
+    :param iam_template:
+    :param pipeline_templates:
+    :return:
+    """
     default_tags = project_tags(project)
 
     core = Template(Description=f"Core resources for pipeformer-managed project: {project.name}")
