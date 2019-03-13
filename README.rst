@@ -27,6 +27,12 @@ pipeformer
 Tool for generating CodePipeline pipelines and related resources from a simple configuration.
 
 
+.. important::
+
+    Pipeformer is currently under development and is not yet available for use.
+    Watch this space for more information as the project progresses and if you're interested feel free to join in!
+
+
 ********
 Abstract
 ********
