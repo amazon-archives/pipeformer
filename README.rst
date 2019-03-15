@@ -171,7 +171,7 @@ Before submitting a pull request
 
 Before submitting a pull request, please run the ``lint`` tox environment.
 This will ensure that your submission meets our code formatting requirements
-and will pass our continous integration code formatting tests.
+and will pass our continuous integration code formatting tests.
 
 
 .. _tox: http://tox.readthedocs.io/

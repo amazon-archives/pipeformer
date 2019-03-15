@@ -1,0 +1,33 @@
+# Python/dev-tools
+tox
+pyenv
+cpython
+CPython
+
+# Project-specific
+pipeformer
+
+# AWS
+arn
+aws
+buildspec
+cmk
+codebuild
+codepipeline
+iam
+
+# GitHub tags
+wontfix
+
+# General dev words
+arg
+args
+config
+changelog
+github
+plugin
+pre
+runtimes
+util
+utils
+versioning
