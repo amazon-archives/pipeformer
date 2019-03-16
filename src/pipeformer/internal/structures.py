@@ -74,7 +74,7 @@ class _ConfigStructure:
 
 @attr.s
 class Input(_ConfigStructure):
-    """
+    """Container and formatter for input values.
 
     :param name: Input name
     :param description: Input description

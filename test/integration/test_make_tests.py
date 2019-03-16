@@ -13,8 +13,6 @@
 """Placeholder module to remind you to write tests."""
 import pytest
 
-import pipeformer
-
 
 @pytest.mark.xfail(strict=True)
 @pytest.mark.integ

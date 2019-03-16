@@ -87,6 +87,7 @@ class Deployer:
     @property
     def _templates(self):
         """Lazily load templates from config.
+
         This is necessary because the inputs need to be collected before the templates are built.
         """
         if not self._inputs_collected:
@@ -198,7 +199,7 @@ class Deployer:
         # We specifically do not want to wait for this to complete.
 
     def _deploy_core_stack(self) -> str:
-        """Deploy or update the core stack"""
+        """Deploy or update the core stack."""
         if self._stack_exists(self._core_stack_name()):
             self._update_existing_core_stack()
             return "stack_update_complete"
@@ -214,6 +215,7 @@ class Deployer:
 
     def deploy_standalone(self):
         """Deploy a standalone PipeFormer application.
+
         This will create all necessary resources including all IAM Roles and a KMS CMK.
         """
         _LOGGER.info("Collecting user inputs.")

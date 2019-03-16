@@ -76,7 +76,7 @@ def populated_config(name: str) -> structures.Config:
     config_filename, inputs = load_config(name)
 
     project = structures.Config.from_file(config_filename)
-    for name, value in inputs.items():
-        project.inputs[name].value = value
+    for input_name, value in inputs.items():
+        project.inputs[input_name].value = value  # attrs confuses pylint: disable=unsubscriptable-object
 
     return project

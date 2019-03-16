@@ -174,6 +174,7 @@ class CloudFormationPhysicalResourceCache:
 
     def physical_resource_name(self, logical_resource_name: str) -> str:
         """Find the physical resource name given its logical resource name.
+
         If the resource does not exist yet, wait until it does.
 
         :param logical_resource_name: Logical resource name of resource

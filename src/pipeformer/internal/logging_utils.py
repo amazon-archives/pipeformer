@@ -29,12 +29,12 @@ class _BlacklistFilter(logging.Filter):  # pylint: disable=too-few-public-method
     """
 
     def __init__(self, *args: str):
-        """Creates internal blacklist."""
+        """Create internal blacklist."""
         super(_BlacklistFilter, self).__init__()
         self.__blacklist = args
 
     def filter(self, record: logging.LogRecord) -> bool:
-        """Determines whether to filter record.
+        """Determine whether to filter record.
 
         :param record: Logging record to filter
         :type record: logging.LogRecord
@@ -43,7 +43,7 @@ class _BlacklistFilter(logging.Filter):  # pylint: disable=too-few-public-method
 
 
 def _logging_levels(verbosity: int, quiet: bool) -> Iterator[int]:
-    """Determines the proper logging levels given required verbosity level and quiet.
+    """Determine the proper logging levels given required verbosity level and quiet.
 
     :param verbosity: Requested level of verbosity
     :param quiet: Suppresses all logging when true
@@ -61,7 +61,7 @@ def _logging_levels(verbosity: int, quiet: bool) -> Iterator[int]:
 
 
 def setup_logger(verbosity: int, quiet: bool):
-    """Sets up the logger.
+    """Set up the logger.
 
     :param verbosity: Requested level of verbosity
     :param quiet: Suppresses all logging when true

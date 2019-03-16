@@ -112,6 +112,7 @@ class DefaultInputHandler(InputHandler):
     @property
     def cache(self):
         """Lazily create the physical resource cache and return it for use.
+
         This is necessary because the resources do not exist yet when we create this handler
         (needed for collecting inputs)
         but will exist by the time we need to save those inputs.

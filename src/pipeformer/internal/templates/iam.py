@@ -61,23 +61,19 @@ def _cloudformation_role() -> iam.Role:
     # so this does not work:
     # arn:PARTITION:*:REGION:ACCOUNT:*
     #
-    # Ideally, I would like to define:
-    # arn:PARTITION:*:REGION:ACCOUNT:*
-    # arn:PARTITION:s3:::*
-    # arn:PARTITION:iam::ACCOUNT:*
-    _good_policy = AWS.PolicyDocument(
-        Statement=[
-            AWS.Statement(
-                Effect=AWS.Allow,
-                Action=[AWS.Action("*")],
-                Resource=[
-                    account_arn(service_prefix="*", resource="*"),
-                    account_arn(service_prefix=S3.prefix, resource="*"),
-                    account_arn(service_prefix=IAM.prefix, resource="*"),
-                ],
-            )
-        ]
-    )
+    # _desired_policy = AWS.PolicyDocument(
+    #    Statement=[
+    #        AWS.Statement(
+    #            Effect=AWS.Allow,
+    #            Action=[AWS.Action("*")],
+    #            Resource=[
+    #                account_arn(service_prefix="*", resource="*"),
+    #                account_arn(service_prefix=S3.prefix, resource="*"),
+    #                account_arn(service_prefix=IAM.prefix, resource="*"),
+    #            ],
+    #        )
+    #    ]
+    # )
     policy = AWS.PolicyDocument(Statement=[AWS.Statement(Effect=AWS.Allow, Action=[AWS.Action("*")], Resource=["*"])])
     return iam.Role(
         resource_name(iam.Role, "CloudFormation"),

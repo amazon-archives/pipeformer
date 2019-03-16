@@ -25,7 +25,10 @@ pytestmark = [pytest.mark.local, pytest.mark.functional]
 @pytest.mark.parametrize("stage_name", ("build",))
 def test_parse_config(name: str, stage_name: str):
     project = functional_test_utils.populated_config(name)
-    stage = InputResolver(wrapped=project.pipeline[stage_name], inputs=project.inputs)
+    stage = InputResolver(
+        wrapped=project.pipeline[stage_name],  # attrs confuses pylint: disable=unsubscriptable-object
+        inputs=project.inputs,
+    )
 
     _test = codebuild.build(project, stage)
 
@@ -34,7 +37,10 @@ def test_parse_config(name: str, stage_name: str):
 @pytest.mark.parametrize("stage_name", ("build",))
 def test_generate_template(name: str, stage_name: str):
     project = functional_test_utils.populated_config(name)
-    stage = InputResolver(wrapped=project.pipeline[stage_name], inputs=project.inputs)
+    stage = InputResolver(
+        wrapped=project.pipeline[stage_name],  # attrs confuses pylint: disable=unsubscriptable-object
+        inputs=project.inputs,
+    )
     expected = functional_test_utils.load_vector_as_template(name, f"codebuild-{stage_name}")
 
     test = codebuild.build(project, stage)

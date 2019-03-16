@@ -44,7 +44,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def parse_args(raw_args: Optional[Iterator[str]] = None) -> argparse.Namespace:
-    """Handles argparse to collect the needed input values.
+    """Handle argparse to collect the needed input values.
 
     :param raw_args: List of arguments
     :returns: parsed arguments

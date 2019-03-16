@@ -123,7 +123,7 @@ def _codebuild_stage_name(stage_name) -> str:
 def _stack(
     project: Config, stage: InputResolver, stage_name: str, default_tags: Tags
 ) -> (cloudformation.Stack, Parameter):
-    """Construct a nested CloudFormation stack template
+    """Construct a nested CloudFormation stack template.
 
     :param project: PipeFormer project
     :param stage: Pipeline stage definition
