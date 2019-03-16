@@ -23,11 +23,24 @@ from . import project_tags
 
 
 def project_name(action_number: int) -> str:
+    """Construct the project logical resource name.
+
+    :param action_number: Unique count identifier for project in stack
+    :return: Logical resource name
+    """
     return resource_name(codebuild.Project, string.ascii_letters[action_number])
 
 
 def _build_project(name: str, action: InputResolver, role: Ref, bucket: Ref, tags: Tags) -> codebuild.Project:
-    """"""
+    """Construct a CodeBuild project for the specified action.
+
+    :param name: Logical resource name to use for project
+    :param action: Action wrapped in an InputResolver
+    :param role: Reference to CodeBuild role
+    :param bucket: Reference to application resources bucket
+    :param tags: Tags to add to project
+    :return: Constructed project
+    """
     return codebuild.Project(
         name,
         Name=Sub(f"${{{AWS_STACK_NAME}}}-{name}"),
@@ -46,7 +59,12 @@ def _build_project(name: str, action: InputResolver, role: Ref, bucket: Ref, tag
 
 
 def build(project: Config, stage: InputResolver) -> Template:
-    """"""
+    """Build a stack template for all CodeBuild actions in a CodePipeline stage.
+
+    :param project: PipeFormer project to build for
+    :param stage: Stage for which to construct CodeBuild projects
+    :return: Constructed template
+    """
     resources = Template(
         Description=f"CodeBuild projects for {stage.name} stage in pipeformer-managed project: {project.name}"
     )
