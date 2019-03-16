@@ -121,7 +121,9 @@ class DefaultInputHandler(InputHandler):
         if self._cache is not None:
             return self._cache
 
-        self._cache = CloudFormationPhysicalResourceCache(client=self._cloudformation, stack_name=self._stack_namer())
+        self._cache = CloudFormationPhysicalResourceCache(
+            client=self._cloudformation, stack_name=self._stack_namer()  # pylint: disable=not-callable
+        )
         return self._cache
 
     @staticmethod
@@ -155,7 +157,7 @@ class DefaultInputHandler(InputHandler):
 
         :param secret: Input to save
         """
-        _LOGGER.debug(f'Saving secret value for input "{secret.name}"')
+        _LOGGER.debug('Saving secret value for input "%s"', secret.name)
         self._assert_input_set(secret)
         secret_id = self.cache.physical_resource_name(secret.resource_name())
         self._secrets_manager.update_secret(SecretId=secret_id, SecretString=secret.value)
@@ -172,7 +174,7 @@ class DefaultInputHandler(InputHandler):
 
         :param parameter: Input to save
         """
-        _LOGGER.debug(f'Saving parameter value for input "{parameter.name}"')
+        _LOGGER.debug('Saving parameter value for input "%s"', parameter.name)
         self._assert_input_set(parameter)
         parameter_name = self.cache.physical_resource_name(parameter.resource_name())
         parameter.version = self._parameter_store.put_parameter(

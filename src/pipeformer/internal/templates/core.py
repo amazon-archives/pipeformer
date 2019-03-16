@@ -141,14 +141,14 @@ def _wait_condition_stack(
     tags: Tags,
     depends_on: Optional[Iterable] = None,
 ) -> WaitConditionStack:
-    """
+    """Construct a wait-condition-managed stack.
 
-    :param base_name:
-    :param parameters:
-    :param artifacts_bucket:
-    :param tags:
-    :param depends_on:
-    :return:
+    :param base_name: Name to use for base of logical names
+    :param parameters: Stack parameters
+    :param artifacts_bucket: Artifacts bucket resource
+    :param tags: Tags to set on stack
+    :param depends_on: Resources that stack will depend on
+    :return: Constructed resources
     """
     if depends_on is None:
         depends_on = []
@@ -167,11 +167,11 @@ def _wait_condition_stack(
 def build(project: Config, inputs_template: Template, iam_template: Template, pipeline_templates: Pipeline) -> Template:
     """Construct a core stack template for a stand-alone deployment.
 
-    :param project:
-    :param inputs_template:
-    :param iam_template:
-    :param pipeline_templates:
-    :return:
+    :param project: PipeFormer config
+    :param inputs_template: Inputs stack template
+    :param iam_template: IAM stack template
+    :param pipeline_templates: CodePipeline templates
+    :return: Core stack template
     """
     default_tags = project_tags(project)
 
@@ -227,7 +227,7 @@ def build(project: Config, inputs_template: Template, iam_template: Template, pi
             pipeline_parameters[name] = GetAtt(nested_stack.stack.title, f"Outputs.{name}")
 
     # Add waiters for each pipeline stage resource stack template
-    for name, stage_template in pipeline_templates.stage_templates.items():
+    for name in pipeline_templates.stage_templates:
         stage_name = VALUE_SEPARATOR.join(("CodeBuild", "Stage", name))
         condition, handle = _wait_condition("Template", stage_name)
 

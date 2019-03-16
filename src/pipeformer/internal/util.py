@@ -179,11 +179,13 @@ class CloudFormationPhysicalResourceCache:
         :param logical_resource_name: Logical resource name of resource
         """
         try:
-            response = self._cache[logical_resource_name]
+            response = self._cache[logical_resource_name]  # attrs confuses pylint: disable=unsubscriptable-object
         except KeyError:
             response = self._wait_until_field_exists(
                 logical_resource_name=logical_resource_name, field_name="PhysicalResourceId"
             )
-            self._cache[logical_resource_name] = response
+            self._cache[  # attrs confuses pylint: disable=unsupported-assignment-operation
+                logical_resource_name
+            ] = response
 
         return response["StackResourceDetail"]["PhysicalResourceId"]

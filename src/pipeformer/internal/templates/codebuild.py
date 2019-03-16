@@ -16,7 +16,7 @@ import string
 from troposphere import AWS_STACK_NAME, Output, Parameter, Ref, Sub, Tags, Template, codebuild, iam, s3
 
 from pipeformer.internal.resolve import InputResolver
-from pipeformer.internal.structures import Config, PipelineAction, PipelineStage
+from pipeformer.internal.structures import Config
 from pipeformer.internal.util import reference_name, resource_name
 
 from . import project_tags

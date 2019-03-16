@@ -11,7 +11,7 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 """Helpers for resolving custom formatting."""
-from typing import Iterable, Type, Union
+from typing import Iterable, Union
 
 import attr
 from attr.validators import deep_mapping, instance_of
@@ -21,7 +21,7 @@ from .structures import Input
 
 _INPUT_TAG = ["{INPUT:", "}"]
 _PRIMITIVE_TYPES = (int, float, complex, bool, type(None))
-_PRIMITIVE_TYPE_TYPES = Union[int, float, complex, bool, None]
+_PrimitiveTypes = Union[int, float, complex, bool, None]
 __all__ = ("InputResolver",)
 
 
@@ -77,7 +77,7 @@ class InputResolver:
     required_inputs = attr.ib(default=attr.Factory(set))
 
     @_wrapped.validator
-    def _validate_wrapped(self, attribute, value):
+    def _validate_wrapped(self, attribute, value):  # pylint: disable=unused-argument,no-self-use
         """Validate characteristics about the wrapped object."""
         if isinstance(value, InputResolver):
             raise TypeError(f"{InputResolver!r} cannot wrap itself.")
@@ -102,7 +102,7 @@ class InputResolver:
         self.required_inputs.add(name)
         return prefix, reference, suffix
 
-    def __convert_value(self, value) -> Union[_PRIMITIVE_TYPE_TYPES, "InputResolver", str, Join]:
+    def __convert_value(self, value) -> Union[_PrimitiveTypes, "InputResolver", str, Join]:
         """Convert a value from the wrapped object to a value that can insert input resolutions."""
         if isinstance(value, _PRIMITIVE_TYPES):
             return value
@@ -122,31 +122,31 @@ class InputResolver:
     def __eq__(self, other) -> bool:
         """Passthrough eq from wrapped."""
         if isinstance(other, InputResolver):
-            return self._wrapped.__eq__(other._wrapped)
+            return self._wrapped.__eq__(other._wrapped)  # pylint: disable=protected-access
         return self._wrapped.__eq__(other)
 
     def __lt__(self, other) -> bool:
         """Passthrough lt from wrapped."""
         if isinstance(other, InputResolver):
-            return self._wrapped.__lt__(other._wrapped)
+            return self._wrapped.__lt__(other._wrapped)  # pylint: disable=protected-access
         return self._wrapped.__lt__(other)
 
     def __gt__(self, other) -> bool:
         """Passthrough gt from wrapped."""
         if isinstance(other, InputResolver):
-            return self._wrapped.__gt__(other._wrapped)
+            return self._wrapped.__gt__(other._wrapped)  # pylint: disable=protected-access
         return self._wrapped.__gt__(other)
 
     def __le__(self, other) -> bool:
         """Passthrough le from wrapped."""
         if isinstance(other, InputResolver):
-            return self._wrapped.__le__(other._wrapped)
+            return self._wrapped.__le__(other._wrapped)  # pylint: disable=protected-access
         return self._wrapped.__le__(other)
 
     def __ge__(self, other) -> bool:
         """Passthrough ge from wrapped."""
         if isinstance(other, InputResolver):
-            return self._wrapped.__ge__(other._wrapped)
+            return self._wrapped.__ge__(other._wrapped)  # pylint: disable=protected-access
         return self._wrapped.__ge__(other)
 
     def __str__(self) -> str:

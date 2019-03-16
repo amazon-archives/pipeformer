@@ -17,5 +17,9 @@ from pipeformer.internal.structures import Config
 
 
 def project_tags(project: Config) -> Tags:
-    """"""
+    """Construct default tags for a project.
+
+    :param project: PipeFormer project
+    :return: Tags
+    """
     return Tags(pipeformer=project.name)

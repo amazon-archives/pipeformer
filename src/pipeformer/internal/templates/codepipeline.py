@@ -32,13 +32,13 @@ _ACTION_TYPE_IDS = {
 
 def _action_configuration(action: InputResolver, stage_name: str, action_number: int) -> Dict[str, str]:
     codebuild_output = reference_name(codebuild_template.project_name(action_number), "Name")
-    _ACTION_TYPE_DEFAULT_CONFIGURATIONS = {
+    _action_type_default_configurations = {
         "GitHub": lambda: dict(PollForSourceChanges=True),
         "CodeBuild": lambda: dict(ProjectName=GetAtt(_codebuild_stage_name(stage_name), f"Outputs.{codebuild_output}")),
         "CloudFormation": lambda: dict(RoleArn=Ref(reference_name(resource_name(iam.Role, "CloudFormation"), "Arn"))),
     }
 
-    config = _ACTION_TYPE_DEFAULT_CONFIGURATIONS.get(action.provider, lambda: {})()
+    config = _action_type_default_configurations.get(action.provider, lambda: {})()
     # expand and re-cast configuration to resolve references
     config.update(dict(**action.configuration))
     return config

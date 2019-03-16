@@ -155,19 +155,19 @@ class PipelineAction(_ConfigStructure):
     run_order: int = attr.ib(default=1, validator=optional(instance_of(int)))
 
     @run_order.validator
-    def _check_run_order(self, attribute, value):
+    def _check_run_order(self, attribute, value):  # pylint: disable=unused-argument,no-self-use
         """Verify that ``run_order`` value is valid."""
         if value < 1:
             raise ValueError("PipelineAction run_order value must be >= 1")
 
     @image.validator
-    def _check_image(self, attribute, value):
+    def _check_image(self, attribute, value):  # pylint: disable=unused-argument
         """Verify that ``image`` is set if provider type ``CodeBuild`` is used."""
         if self.provider == "CodeBuild" and value is None:
             raise ValueError('image must be defined for actions of type "CodeBuild"')
 
     @buildspec.validator
-    def _check_buildspec(self, attribute, value):
+    def _check_buildspec(self, attribute, value):  # pylint: disable=unused-argument
         """Verify that ``buildspec`` is set if provider type ``CodeBuild`` is used."""
         if self.provider == "CodeBuild" and value is None:
             raise ValueError('buildspec must be defined for actions of type "CodeBuild"')
@@ -215,7 +215,7 @@ class Config(_ConfigStructure):
     )
 
     @custom_cmk.validator
-    def _check_custom_cmk(self, attribute, value):
+    def _check_custom_cmk(self, attribute, value):  # pylint: disable=unused-argument,,no-self-use
         """Validate that the ``custom_cmk`` value is always ``True``."""
         if not value:
             raise ValueError(
@@ -250,8 +250,8 @@ class Config(_ConfigStructure):
         :param filename: Existing filename
         :return: Loaded PipeFormer config
         """
-        with open(filename, "rb") as f:
-            raw_parsed = yaml.safe_load(f)
+        with open(filename, "rb") as config_file:
+            raw_parsed = yaml.safe_load(config_file)
 
         return cls.from_dict(raw_parsed)
 
