@@ -11,7 +11,7 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 """Helpers for resolving custom formatting."""
-from typing import Iterable, Union, Type
+from typing import Iterable, Type, Union
 
 import attr
 from attr.validators import deep_mapping, instance_of

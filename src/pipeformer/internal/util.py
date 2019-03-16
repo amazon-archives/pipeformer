@@ -18,7 +18,7 @@ from typing import Dict
 import attr
 import awacs.iam
 import awacs.s3
-from attr.validators import instance_of, deep_mapping
+from attr.validators import deep_mapping, instance_of
 from botocore.exceptions import ClientError
 from troposphere import AWS_ACCOUNT_ID, AWS_PARTITION, AWS_REGION, AWSObject, Sub
 
@@ -28,12 +28,7 @@ VALUE_SEPARATOR: str = "0"
 MAX_RESOURCE_ATTEMPTS: int = 20
 WAIT_PER_ATTEMPT: int = 5
 _LOGGER = logging.getLogger(LOGGER_NAME)
-__all__ = (
-    "resource_name",
-    "reference_name",
-    "account_arn",
-    "CloudFormationPhysicalResourceCache"
-)
+__all__ = ("resource_name", "reference_name", "account_arn", "CloudFormationPhysicalResourceCache")
 
 
 def resource_name(resource_type: AWSObject, name: str) -> str:
