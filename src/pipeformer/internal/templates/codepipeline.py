@@ -28,9 +28,23 @@ _ACTION_TYPE_IDS = {
     "CodeBuild": codepipeline.ActionTypeId(Category="Build", Owner="AWS", Provider="CodeBuild", Version="1"),
     "CloudFormation": codepipeline.ActionTypeId(Category="Deploy", Owner="AWS", Provider="CloudFormation", Version="1"),
 }
+_DEFAULT_PARAMETERS = (
+    Parameter(reference_name(resource_name(s3.Bucket, "Artifacts"), "Name"), Type="String"),
+    Parameter(reference_name(resource_name(s3.Bucket, "ProjectResources"), "Name"), Type="String"),
+    Parameter(reference_name(resource_name(iam.Role, "CodePipeline"), "Arn"), Type="String"),
+    Parameter(reference_name(resource_name(iam.Role, "CodeBuild"), "Arn"), Type="String"),
+    Parameter(reference_name(resource_name(iam.Role, "CloudFormation"), "Arn"), Type="String"),
+)
 
 
 def _action_configuration(action: InputResolver, stage_name: str, action_number: int) -> Dict[str, str]:
+    """Compile a CloudFormation CodePipeline action configuration.
+
+    :param action: PipeFormer action definition
+    :param stage_name: Stage name
+    :param action_number: Action counter
+    :return: CloudFormation action configuration
+    """
     codebuild_output = reference_name(codebuild_template.project_name(action_number), "Name")
     _action_type_default_configurations = {
         "GitHub": lambda: dict(PollForSourceChanges=True),
@@ -45,6 +59,13 @@ def _action_configuration(action: InputResolver, stage_name: str, action_number:
 
 
 def _stage_action(stage_name: str, action_number: int, action: InputResolver) -> codepipeline.Actions:
+    """Construct a CodePipeline action resource.
+
+    :param stage_name: Stage name
+    :param action_number: Action counter
+    :param action: PipeFormer action definition
+    :return: CloudFormation action definition
+    """
     try:
         action_type_id = _ACTION_TYPE_IDS[action.provider]
     except KeyError:
@@ -69,6 +90,11 @@ def _stage_action(stage_name: str, action_number: int, action: InputResolver) ->
 
 
 def _stage(stage: InputResolver) -> codepipeline.Stages:
+    """Construct a CodePipeline stage resource.
+
+    :param stage: PipeFormer stage definition
+    :return: CloudFormation stage definition
+    """
     stage_actions = []
     for pos, action in enumerate(stage.actions):
         stage_actions.append(_stage_action(stage.name, pos, action))
@@ -77,16 +103,34 @@ def _stage(stage: InputResolver) -> codepipeline.Stages:
 
 
 def _url_reference(stage_name) -> str:
+    """Build a stage stack template URL reference logical resource name.
+
+    :param stage_name: Stage name
+    :return: Logical resource name
+    """
     return reference_name(VALUE_SEPARATOR.join(("Template", "CodeBuild", "Stage", stage_name)), "Url")
 
 
 def _codebuild_stage_name(stage_name) -> str:
+    """Build a CodeBuild stage logical resource name.
+
+    :param stage_name: Stage name
+    :return: Logical resource name
+    """
     return resource_name(cloudformation.Stack, VALUE_SEPARATOR.join(("CodeBuild", "Stage", stage_name)))
 
 
 def _stack(
     project: Config, stage: InputResolver, stage_name: str, default_tags: Tags
 ) -> (cloudformation.Stack, Parameter):
+    """Construct a nested CloudFormation stack template
+
+    :param project: PipeFormer project
+    :param stage: Pipeline stage definition
+    :param stage_name: Stage name
+    :param default_tags: Default tags to add to resources
+    :return: Constructed stack template and a parameter to add to the parent template.
+    """
     # Add stack to template
     parameters = {
         name: Ref(name)
@@ -109,22 +153,16 @@ def _stack(
     )
 
 
-def _default_parameters() -> Iterable[Parameter]:
-    return (
-        Parameter(reference_name(resource_name(s3.Bucket, "Artifacts"), "Name"), Type="String"),
-        Parameter(reference_name(resource_name(s3.Bucket, "ProjectResources"), "Name"), Type="String"),
-        Parameter(reference_name(resource_name(iam.Role, "CodePipeline"), "Arn"), Type="String"),
-        Parameter(reference_name(resource_name(iam.Role, "CodeBuild"), "Arn"), Type="String"),
-        Parameter(reference_name(resource_name(iam.Role, "CloudFormation"), "Arn"), Type="String"),
-    )
-
-
 def build(project: Config) -> Pipeline:
-    """"""
+    """Construct CodePipeline templates for a project.
+
+    :param project: PipeFormer project
+    :return: Constructed templates
+    """
     pipeline_template = Template(Description=f"CodePipeline resources for pipeformer-managed project: {project.name}")
 
     # Add resource parameters
-    for param in _default_parameters():
+    for param in _DEFAULT_PARAMETERS:
         pipeline_template.add_parameter(param)
 
     required_inputs = set()
