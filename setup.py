@@ -52,7 +52,7 @@ def get_requirements():
     return requirements, dependencies
 
 
-install_requires, dependency_links = get_requirements()
+INSTALL_REQUIRES, DEPENDENCY_LINKS = get_requirements()
 
 setup(
     name="pipeformer",
@@ -68,8 +68,8 @@ setup(
     keywords="pipeformer pipeformer aws",
     data_files=["README.rst", "CHANGELOG.rst", "LICENSE", "requirements.txt"],
     license="Apache 2.0",
-    install_requires=install_requires,
-    dependency_links=dependency_links,
+    install_requires=INSTALL_REQUIRES,
+    dependency_links=DEPENDENCY_LINKS,
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",

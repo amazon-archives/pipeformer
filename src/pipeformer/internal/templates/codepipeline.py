@@ -12,7 +12,7 @@
 # language governing permissions and limitations under the License.
 """Logic for building the CodePipeline stack template."""
 from collections import OrderedDict
-from typing import Dict, Iterable
+from typing import Dict
 
 from troposphere import GetAtt, Parameter, Ref, Tags, Template, cloudformation, codepipeline, iam, s3
 
@@ -46,7 +46,7 @@ def _action_configuration(action: InputResolver, stage_name: str, action_number:
     :return: CloudFormation action configuration
     """
     codebuild_output = reference_name(codebuild_template.project_name(action_number), "Name")
-    _action_type_default_configurations = {
+    _action_type_default_configurations = {  # pylint: disable=invalid-name
         "GitHub": lambda: dict(PollForSourceChanges=True),
         "CodeBuild": lambda: dict(ProjectName=GetAtt(_codebuild_stage_name(stage_name), f"Outputs.{codebuild_output}")),
         "CloudFormation": lambda: dict(RoleArn=Ref(reference_name(resource_name(iam.Role, "CloudFormation"), "Arn"))),
