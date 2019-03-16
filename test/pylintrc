@@ -13,6 +13,8 @@ disable =
     protected-access,  # raised when calling _ methods
     abstract-method,  # we do this on purpose to test that they are enforced
     unused-argument,  # raised when patches are needed but not called
+    no-self-use,  # raised when pytest tests are grouped in classes
+    too-many-public-methods,  # raised when pytest tests are grouped in classes
 
 [VARIABLES]
 additional-builtins = raw_input
