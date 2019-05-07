@@ -44,6 +44,8 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx_autodoc_typehints",
+    "sphinxcontrib.spelling",
 ]
 napoleon_include_special_with_doc = False
 
@@ -74,3 +76,9 @@ intersphinx_mapping = {"python": ("http://docs.python.org/", None)}
 
 # autosummary
 autosummary_generate = True
+
+# Spellchecker
+spelling_word_list_filename = "spelling_wordlist.txt"
+spelling_lang = "en_US"
+spelling_ignore_python_builtins = True
+spelling_ignore_importable_modules = True
