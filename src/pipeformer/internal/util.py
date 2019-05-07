@@ -22,9 +22,8 @@ from attr.validators import deep_mapping, instance_of
 from botocore.exceptions import ClientError
 from troposphere import AWS_ACCOUNT_ID, AWS_PARTITION, AWS_REGION, AWSObject, Sub
 
-from pipeformer.identifiers import LOGGER_NAME
+from pipeformer.identifiers import LOGGER_NAME, VALUE_SEPARATOR
 
-VALUE_SEPARATOR: str = "0"
 MAX_RESOURCE_ATTEMPTS: int = 20
 WAIT_PER_ATTEMPT: int = 5
 _LOGGER = logging.getLogger(LOGGER_NAME)
