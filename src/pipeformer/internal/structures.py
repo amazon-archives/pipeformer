@@ -60,12 +60,10 @@ class WaitConditionStack:
 
 class _ConfigStructure:
     """Base for configuration structures."""
-
     @staticmethod
     def _clean_kwargs(kwargs: Dict):
         """Convert keys separators from YAML-valid "-" characters to Python-variable-name-valid "_" characters."""
         return {key.replace("-", "_"): value for key, value in kwargs.items()}
-
     @classmethod
     def from_dict(cls, kwargs: Dict):
         """Load from a dictionary."""
@@ -81,12 +79,12 @@ class Input(_ConfigStructure):
     :param secret: Is this input a secret?
     :param value: Input value (optional)
     """
-
     name: str = attr.ib(validator=instance_of(str))
     description: str = attr.ib(validator=instance_of(str))
     secret: bool = attr.ib(validator=instance_of(bool))
     value: Optional[str] = attr.ib(default=None, validator=optional(instance_of(str)))
-    version = None
+    version: Optional[int] = None
+    _value_type: str
 
     def __attrs_post_init__(self):
         """Set additional configuration values based on input type."""
