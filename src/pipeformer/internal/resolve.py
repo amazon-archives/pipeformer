@@ -78,7 +78,9 @@ class InputResolver:
 
     @_wrapped.validator
     def _validate_wrapped(self, attribute, value):  # pylint: disable=unused-argument,no-self-use
-        """Validate characteristics about the wrapped object."""
+        """Validate characteristics about the wrapped object.
+        Used by attrs as the validator for the ``_wrapped`` attribute.
+        """
         if isinstance(value, InputResolver):
             raise TypeError(f"{InputResolver!r} cannot wrap itself.")
 
