@@ -10,8 +10,18 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
-"""Unique identifiers used by pipeformer."""
-__all__ = ("__version__", "LOGGER_NAME", "VALUE_SEPARATOR")
-__version__ = "0.0.1"
-LOGGER_NAME = "pipeformer"
-VALUE_SEPARATOR: str = "0"
+"""Functional tests for ``pipeformer.internal.structures``."""
+import pytest
+
+from pipeformer.internal.structures import Config
+
+from .. import functional_test_utils
+
+pytestmark = [pytest.mark.local, pytest.mark.functional]
+
+
+@pytest.mark.parametrize("name", functional_test_utils.vector_names())
+def test_load_config(name: str):
+    config_filename, _inputs = functional_test_utils.load_config(name)
+
+    _test = Config.from_file(config_filename)
