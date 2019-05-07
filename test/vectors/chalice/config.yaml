@@ -1,6 +1,6 @@
 name: ExampleChaliceApp
 description: Example pipeline for deploying a Chalice application.
-custom-cmk: true
+generate-cmk: true
 
 inputs:
   GitHubToken:

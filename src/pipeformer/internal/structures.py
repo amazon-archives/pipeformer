@@ -197,14 +197,14 @@ class Config(_ConfigStructure):
 
     :param name: Project name
     :param description: Project description
-    :param custom_cmk: Should a custom CMK be generated? (reserved for later use: must always be ``True``)
+    :param generate_cmk: Should a custom CMK be generated? (reserved for later use: must always be ``True``)
     :param pipeline: Mapping of stage names to pipeline stages
     :param inputs: Mapping of input names to loaded inputs
     """
 
     name: str = attr.ib(validator=instance_of(str))
     description: str = attr.ib(validator=instance_of(str))
-    custom_cmk: bool = attr.ib(validator=instance_of(bool))
+    generate_cmk: bool = attr.ib(validator=instance_of(bool))
     pipeline: Dict[str, PipelineStage] = attr.ib(
         validator=deep_mapping(key_validator=instance_of(str), value_validator=instance_of(PipelineStage))
     )
@@ -212,12 +212,12 @@ class Config(_ConfigStructure):
         validator=optional(deep_mapping(key_validator=instance_of(str), value_validator=instance_of(Input)))
     )
 
-    @custom_cmk.validator
-    def _check_custom_cmk(self, attribute, value):  # pylint: disable=unused-argument,,no-self-use
-        """Validate that the ``custom_cmk`` value is always ``True``."""
+    @generate_cmk.validator
+    def _check_generate_cmk(self, attribute, value):  # pylint: disable=unused-argument,,no-self-use
+        """Validate that the ``generate_cmk`` value is always ``True``."""
         if not value:
             raise ValueError(
-                "Use of AWS-managed CMKs is not supported. Must use customer-managed CMK (custom-cmk: true)."
+                "Use of AWS-managed CMKs is not supported. Must use customer-managed CMK (generate-cmk: true)."
             )
 
     @classmethod
