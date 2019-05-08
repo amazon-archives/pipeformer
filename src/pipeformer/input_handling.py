@@ -38,28 +38,36 @@ class InputHandler:
 
         :param secret: Input to collect from user
         """
-        raise NotImplementedError()
+        raise NotImplementedError(
+            "InputHandler does not provide an implementation of collect_secret. Children must provide their own."
+        )
 
     def save_secret(self, secret: Input):
         """Save a secret input value.
 
         :param secret: Input to save
         """
-        raise NotImplementedError()
+        raise NotImplementedError(
+            "InputHandler does not provide an implementation of save_secret. Children must provide their own."
+        )
 
     def collect_parameter(self, parameter: Input):
         """Collect a non-secret input value from the user.
 
         :param parameter: Input to collect from user
         """
-        raise NotImplementedError()
+        raise NotImplementedError(
+            "InputHandler does not provide an implementation of collect_parameter. Children must provide their own."
+        )
 
     def save_parameter(self, parameter: Input):
         """Save a non-secret input value.
 
         :param parameter: Input to save
         """
-        raise NotImplementedError()
+        raise NotImplementedError(
+            "InputHandler does not provide an implementation of save_parameter. Children must provide their own."
+        )
 
     def collect_inputs(self, inputs: Dict[str, Input]):
         """Collect all input values.
