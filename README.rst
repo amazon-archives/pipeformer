@@ -73,6 +73,30 @@ The primary operating mode for pipeformer is to take your configuration,
 use it to generate CloudFormation templates that describe the needed resources,
 and then deploy those templates.
 
+The user interface for running ``pipeformer`` is simply to point it at your configuration file
+and provide any input values when prompted.
+
+
+..code:: bash
+
+   $ pipeformer --config my-config-file.yaml -vv
+
+
+When you run the ``pipeformer`` command line tool, it will:
+
+#. Parse your config file and determine what inputs are needed.
+#. Construct the CloudFormation templates needed to satisfy what you defined in your config file.
+#. Prompt you for any needed input values.
+#. Deploy the core stack (creates the project bucket and KMS CMK) and all nested stacks.
+
+   #. Once the project bucket and CMK exist, upload all generated templates to the project bucket.
+   #. Report back to the core stack CloudFormation waiters that the templates are uploaded.
+      This causes CloudFormation to continue deploying the nested stacks.
+   #. Once the inputs stack creation is complete:
+      take the input values that you provided and updates the appropriate values in the inputs stack.
+   #. Report back to the core stack CloudFormation waiter that the input values have been set.
+      This causes CloudFormation to continue deploying the rest of the nested stacks.
+
 Configuration
 =============
 
@@ -97,7 +121,7 @@ Required Prerequisites
 Installation
 ============
 
-.. code::
+.. code:: bash
 
    $ pip install pipeformer
 
@@ -112,7 +136,7 @@ Prerequisites
 
   * Python 3.6+
   * `tox`_ : We use tox to drive all of our testing and package management behavior.
-     Any tests that you want to run should be run using tox.
+    Any tests that you want to run should be run using tox.
 
 * Optional
 
@@ -127,12 +151,12 @@ Setting up pyenv
 If you are using pyenv, make sure that you have set up all desired runtimes and configured the environment
 before attempting to run any tests.
 
-1. Install all desired runtimes.
+#. Install all desired runtimes.
 
    * ex: ``pyenv install 3.7.0``
    * **NOTE:** You can only install one runtime at a time with the ``pyenv install`` command.
 
-1. In the root of the checked out repository for this package, set the runtimes that pyenv should use.
+#. In the root of the checked out repository for this package, set the runtimes that pyenv should use.
 
    * ex: ``pyenv local 3.7.0 3.6.4``
    * **NOTE:** This creates the ``.python-version`` file that pyenv will use. Pyenv treats the first
