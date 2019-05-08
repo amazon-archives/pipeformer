@@ -14,20 +14,8 @@
 import uuid
 from typing import Iterator, Optional
 
-# TODO: Disabling this for now. Re-enable once all relevant PRs are complete to include these components.
-# from .deploy import Deployer
+from .deploy import Deployer
 from .identifiers import __version__
-
-# TODO: Placeholder values. Remove when re-enabling content.
-__all__ = ("__version__",)
-
-
-def cli():
-    """Placeholder entry point. Remove when re-enabling content."""
-    pass
-
-
-'''
 from .internal.arg_parsing import parse_args
 from .internal.logging_utils import setup_logger
 from .internal.structures import Config
@@ -53,4 +41,3 @@ def cli(raw_args: Optional[Iterator[str]] = None):
     project_deployer = Deployer(project=project, stack_prefix=prefix)
 
     project_deployer.deploy_standalone()
-'''
