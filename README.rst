@@ -32,6 +32,7 @@ Tool for generating CodePipeline pipelines and related resources from a simple c
     Pipeformer is currently under development and is not yet available for use.
     Watch this space for more information as the project progresses and if you're interested feel free to join in!
 
+`Security issue notifications`_
 
 ********
 Abstract
@@ -202,3 +203,4 @@ and will pass our continuous integration code formatting tests.
 .. _detox: https://pypi.org/project/detox/
 .. _tox-pyenv: https://pypi.org/project/tox-pyenv/
 .. _pyenv: https://github.com/pyenv/pyenv
+.. _Security issue notifications: https://github.com/aws/pipeformer/tree/master/CONTRIBUTING.md#security-issue-notifications
