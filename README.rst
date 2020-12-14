@@ -29,6 +29,14 @@ Tool for generating CodePipeline pipelines and related resources from a simple c
 
 .. important::
 
+    Pipeformer is no longer being developed.
+    See `Shuttering pipeformer`_ for more information.
+
+
+.. _Shuttering pipeformer: https://github.com/awslabs/pipeformer/issues/52
+
+.. important::
+
     Pipeformer is currently under development and is not yet available for use.
     Watch this space for more information as the project progresses and if you're interested feel free to join in!
 
